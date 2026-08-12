@@ -6,34 +6,50 @@ class QiblaNeedlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final centerY = h / 2;
+    final centerX = w / 2;
+
+    final fillPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
     final strokePaint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
-    final fillPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
+      ..strokeWidth = 2.2
+      ..isAntiAlias = true;
 
-    final w = size.width;
-    final h = size.height;
-    final diamondWidth = w * 0.72;
+    final whitePaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
 
-    // Diamond body
-    final diamond = Path()
-      ..moveTo(0, h / 2)
-      ..lineTo(diamondWidth / 2, 0)
-      ..lineTo(diamondWidth, h / 2)
-      ..lineTo(diamondWidth / 2, h)
+    // 1. Left filled pointer (Qibla pointer tip pointing left)
+    final leftTip = Path()
+      ..moveTo(0, centerY)
+      ..lineTo(centerX * 0.5, 0)
+      ..lineTo(centerX, centerY)
+      ..lineTo(centerX * 0.5, h)
       ..close();
-    canvas.drawPath(diamond, strokePaint);
+    canvas.drawPath(leftTip, fillPaint);
 
-    // Arrow tip
-    final tip = Path()
-      ..moveTo(diamondWidth, h * 0.15)
-      ..lineTo(w, h / 2)
-      ..lineTo(diamondWidth, h * 0.85)
+    // 2. Right outlined pointer (Opposite tip pointing right)
+    final rightTip = Path()
+      ..moveTo(w, centerY)
+      ..lineTo(centerX + (w - centerX) * 0.5, 0)
+      ..lineTo(centerX, centerY)
+      ..lineTo(centerX + (w - centerX) * 0.5, h)
       ..close();
-    canvas.drawPath(tip, fillPaint);
+
+    canvas.drawPath(rightTip, whitePaint);
+    canvas.drawPath(rightTip, strokePaint);
+
+    // 3. Center pivot circle
+    final pivotRadius = h * 0.28;
+    canvas.drawCircle(Offset(centerX, centerY), pivotRadius, fillPaint);
   }
 
   @override

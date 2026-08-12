@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
 
 class QiblaToggle extends StatelessWidget {
   final bool isMapSelected;
@@ -15,12 +14,12 @@ class QiblaToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 235.w,
-      height: 52.h,
-      padding: EdgeInsets.all(5.w),
+      width: 220.w,
+      height: 46.h,
+      padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: const Color(0xffF2F3F2),
-        borderRadius: BorderRadius.circular(30.r),
+        color: const Color(0xFFF2F4F3),
+        borderRadius: BorderRadius.circular(28.r),
       ),
       child: Row(
         children: [
@@ -48,18 +47,29 @@ class QiblaToggle extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
+          duration: const Duration(milliseconds: 220),
           decoration: BoxDecoration(
             color: selected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(28.r),
+            borderRadius: BorderRadius.circular(24.r),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
           child: Center(
             child: Text(
               text,
               style: TextStyle(
                 fontSize: 14.sp,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                color: AppColors.primary,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: selected
+                    ? const Color(0xFF003831)
+                    : const Color(0xFF677370),
               ),
             ),
           ),

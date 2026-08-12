@@ -5,8 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:latlong2/latlong.dart';
 
-class QiblaMapView extends StatelessWidget {
-  final MapController mapController;
+class QiblaMapView extends StatefulWidget {
   final LatLng userLocation;
   final LatLng kaabaLocation;
   final Position? currentPosition;
@@ -15,13 +14,31 @@ class QiblaMapView extends StatelessWidget {
 
   const QiblaMapView({
     super.key,
-    required this.mapController,
     required this.userLocation,
     required this.kaabaLocation,
     required this.currentPosition,
     required this.qiblaDirection,
     required this.distanceText,
   });
+
+  @override
+  State<QiblaMapView> createState() => _QiblaMapViewState();
+}
+
+class _QiblaMapViewState extends State<QiblaMapView> {
+  late final MapController _mapController;
+
+  @override
+  void initState() {
+    super.initState();
+    _mapController = MapController();
+  }
+
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +52,9 @@ class QiblaMapView extends StatelessWidget {
               child: Stack(
                 children: [
                   FlutterMap(
-                    mapController: mapController,
+                    mapController: _mapController,
                     options: MapOptions(
-                      initialCenter: userLocation,
+                      initialCenter: widget.userLocation,
                       initialZoom: 5.5,
                       minZoom: 2,
                       maxZoom: 18,
@@ -52,7 +69,7 @@ class QiblaMapView extends StatelessWidget {
                       PolylineLayer(
                         polylines: [
                           Polyline(
-                            points: [userLocation, kaabaLocation],
+                            points: [widget.userLocation, widget.kaabaLocation],
                             strokeWidth: 4,
                             color: AppColors.primary,
                           ),
@@ -61,7 +78,7 @@ class QiblaMapView extends StatelessWidget {
                       MarkerLayer(
                         markers: [
                           Marker(
-                            point: userLocation,
+                            point: widget.userLocation,
                             width: 50,
                             height: 50,
                             child: Container(
@@ -80,7 +97,7 @@ class QiblaMapView extends StatelessWidget {
                             ),
                           ),
                           Marker(
-                            point: kaabaLocation,
+                            point: widget.kaabaLocation,
                             width: 55,
                             height: 55,
                             child: Container(
@@ -112,7 +129,7 @@ class QiblaMapView extends StatelessWidget {
                     right: 15.w,
                     bottom: 15.h,
                     child: GestureDetector(
-                      onTap: () => mapController.move(userLocation, 12),
+                      onTap: () => _mapController.move(widget.userLocation, 12),
                       child: Container(
                         width: 48.w,
                         height: 48.w,
@@ -177,7 +194,7 @@ class QiblaMapView extends StatelessWidget {
               ),
               SizedBox(height: 2.h),
               Text(
-                '${qiblaDirection.round()}°',
+                '${widget.qiblaDirection.round()}°',
                 style: TextStyle(
                   fontSize: 17.sp,
                   fontWeight: FontWeight.w700,
@@ -188,7 +205,7 @@ class QiblaMapView extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            distanceText,
+            widget.distanceText,
             style: TextStyle(
               fontSize: 15.sp,
               fontWeight: FontWeight.w700,
@@ -206,10 +223,10 @@ class QiblaMapView extends StatelessWidget {
         Expanded(
           child: _smallCard(
             title: 'YOUR LOCATION',
-            value: currentPosition == null
+            value: widget.currentPosition == null
                 ? 'Detecting...'
-                : '${currentPosition!.latitude.toStringAsFixed(2)}, '
-                      '${currentPosition!.longitude.toStringAsFixed(2)}',
+                : '${widget.currentPosition!.latitude.toStringAsFixed(2)}, '
+                      '${widget.currentPosition!.longitude.toStringAsFixed(2)}',
           ),
         ),
         SizedBox(width: 12.w),

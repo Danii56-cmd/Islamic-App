@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
 
 class QiblaInfoCards extends StatelessWidget {
   final String distanceText;
@@ -10,22 +9,22 @@ class QiblaInfoCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 55.w),
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Row(
         children: [
           Expanded(
             child: QiblaInfoCard(
               title: 'DISTANCE',
               value: distanceText,
-              accent: const Color(0xff00695C),
+              accentColor: const Color(0xFF004D40),
             ),
           ),
-          SizedBox(width: 15.w),
+          SizedBox(width: 14.w),
           const Expanded(
             child: QiblaInfoCard(
-              title: 'COMPASS',
-              value: 'Live\nSensor',
-              accent: AppColors.accent,
+              title: 'PRECISION',
+              value: 'High\nAccuracy',
+              accentColor: Color(0xFFC5A038),
             ),
           ),
         ],
@@ -37,57 +36,67 @@ class QiblaInfoCards extends StatelessWidget {
 class QiblaInfoCard extends StatelessWidget {
   final String title;
   final String value;
-  final Color accent;
+  final Color accentColor;
 
   const QiblaInfoCard({
     super.key,
     required this.title,
     required this.value,
-    required this.accent,
+    required this.accentColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 123.h,
+      height: 98.h,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(13.r),
+        borderRadius: BorderRadius.circular(14.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
+          // Vertical accent bar on the left
           Container(
             width: 4.w,
             decoration: BoxDecoration(
-              color: accent,
+              color: accentColor,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(13.r),
-                bottomLeft: Radius.circular(13.r),
+                topLeft: Radius.circular(14.r),
+                bottomLeft: Radius.circular(14.r),
               ),
             ),
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 15.h),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 9.sp,
-                      letterSpacing: 1,
-                      color: AppColors.textMuted,
+                      fontSize: 10.sp,
+                      letterSpacing: 1.1,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF737D7A),
                     ),
                   ),
-                  SizedBox(height: 8.h),
+                  SizedBox(height: 6.h),
                   Text(
                     value,
                     style: TextStyle(
                       fontSize: 18.sp,
-                      height: 1.35,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
+                      height: 1.25,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF003831),
                     ),
                   ),
                 ],

@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
-      appBar: Appbar(),
+      appBar: const Appbar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25.0),
         child: SingleChildScrollView(
@@ -30,7 +30,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 10.h),
-              HeaderText(text: "A Moment for Reflection"),
+              const HeaderText(text: "A Moment for Reflection"),
               SizedBox(height: 10.h),
               Container(
                 width: double.infinity,
@@ -41,8 +41,8 @@ class HomeScreen extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.shadow,
-                      blurRadius: 05.r,
-                      offset: Offset(0, 02.h),
+                      blurRadius: 5.r,
+                      offset: Offset(0, 2.h),
                     ),
                   ],
                 ),
@@ -52,7 +52,6 @@ class HomeScreen extends StatelessWidget {
                     vertical: 20.0,
                   ),
                   child: Column(
-                    // mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -60,7 +59,7 @@ class HomeScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.w700,
-                          color: Color.fromARGB(255, 115, 92, 0),
+                          color: const Color.fromARGB(255, 115, 92, 0),
                         ),
                       ),
                       SizedBox(height: 10.h),
@@ -86,10 +85,10 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20.h),
-              UpcomingPrayer(),
+              const UpcomingPrayer(),
               SizedBox(height: 30.h),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 05.w),
+                padding: EdgeInsets.symmetric(horizontal: 5.w),
                 child: GridView.count(
                   crossAxisCount: 2,
                   mainAxisExtent: 100.h,
@@ -97,36 +96,42 @@ class HomeScreen extends StatelessWidget {
                   mainAxisSpacing: 15.h,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-
                   children: [
-                    // Qibla
-                    _featureCard(icon: Icons.explore_outlined, title: "Qibla"),
-
-                    // Quran
-                    _featureCard(icon: Icons.menu_book_rounded, title: "Quran"),
-
-                    // Hadith
-                    _featureCard(icon: Icons.history_edu, title: "Hadith"),
-
-                    // Duas
+                    _featureCard(
+                      icon: Icons.explore_outlined,
+                      title: "Qibla",
+                      onTap: () {},
+                    ),
+                    _featureCard(
+                      icon: Icons.menu_book_rounded,
+                      title: "Quran",
+                      onTap: () {},
+                    ),
+                    _featureCard(
+                      icon: Icons.history_edu,
+                      title: "Hadith",
+                      onTap: () {},
+                    ),
                     _featureCard(
                       icon: Icons.volunteer_activism_outlined,
                       title: "Duas",
+                      onTap: () {},
                     ),
-
-                    // Islamic Calendar
                     _featureCard(
                       icon: Icons.calendar_month_rounded,
                       title: "Islamic Calendar",
+                      onTap: () {},
                     ),
-
-                    // More
-                    _featureCard(icon: Icons.bubble_chart, title: "More"),
+                    _featureCard(
+                      icon: Icons.bubble_chart,
+                      title: "More",
+                      onTap: () {},
+                    ),
                   ],
                 ),
               ),
               SizedBox(height: 20.h),
-              JournalContainer(),
+              const JournalContainer(),
               SizedBox(height: 30.h),
             ],
           ),
@@ -148,12 +153,9 @@ class JournalContainer extends StatelessWidget {
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.r)),
       child: Stack(
         children: [
-          // Background Image
           Positioned.fill(
             child: Image.asset(Appconstants.journalImage, fit: BoxFit.cover),
           ),
-
-          // Gradient Overlay
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -164,13 +166,11 @@ class JournalContainer extends StatelessWidget {
                     Colors.transparent,
                     AppColors.prayerCardActiveBg.withValues(alpha: 0.75),
                   ],
-                  stops: [0.25, 1],
+                  stops: const [0.25, 1],
                 ),
               ),
             ),
           ),
-
-          // Text
           Positioned(
             left: 20.w,
             right: 20.w,
@@ -214,44 +214,50 @@ class JournalContainer extends StatelessWidget {
   }
 }
 
-Widget _featureCard({required IconData icon, required String title}) {
-  return Container(
-    decoration: BoxDecoration(
-      color: AppColors.cardBackground,
-      borderRadius: BorderRadius.circular(12.r),
-      boxShadow: [
-        BoxShadow(
-          color: AppColors.shadow,
-          blurRadius: 5.r,
-          offset: Offset(0, 2.h),
-        ),
-      ],
-    ),
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 12.h),
-      child: Column(
-        children: [
-          Container(
-            width: 40.w,
-            height: 40.h,
-            decoration: BoxDecoration(
-              color: AppColors.iconBackground,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: AppColors.primary, size: 24.sp),
-          ),
-          SizedBox(height: 10.w),
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-            ),
+Widget _featureCard({
+  required IconData icon,
+  required String title,
+  required VoidCallback onTap,
+}) {
+  return GestureDetector(
+    child: Container(
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow,
+            blurRadius: 5.r,
+            offset: Offset(0, 2.h),
           ),
         ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 12.h),
+        child: Column(
+          children: [
+            Container(
+              width: 40.w,
+              height: 40.h,
+              decoration: const BoxDecoration(
+                color: AppColors.iconBackground,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: AppColors.primary, size: 24.sp),
+            ),
+            SizedBox(height: 10.w),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     ),
   );

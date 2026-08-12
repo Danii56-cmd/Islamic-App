@@ -18,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = const [
     HomeScreen(),
     QuranScreen(),
-    PrayersScreen(),
+    PrayersScreen(), // Index 2: Prayer Screen
     MoreScreen(),
   ];
 

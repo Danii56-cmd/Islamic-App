@@ -1,172 +1,104 @@
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_needle.dart';
 
 /// Real-time Qibla compass.
-///
-/// flutter_qiblah gives us two bearings:
-/// - qiblaDirection: Qibla bearing from true/magnetic North, 0..360.
-/// - deviceDirection: current phone heading, 0..360.
-///
-/// IMPORTANT:
-/// The compass face stays fixed on screen. Only the Qibla pointer moves.
-/// The pointer position is the relative bearing:
-///
-///   relative = Qibla bearing - phone heading
-///
-/// This prevents the whole compass from spinning and makes the pointer
-/// always show where the Kaaba is relative to the phone.
-class QiblaCompass extends StatefulWidget {
-  final double qiblaDirection;
-  final double deviceDirection;
+/// Uses a StreamBuilder on FlutterCompass.events directly so the needle
+/// re-renders on EVERY magnetometer event without going through parent setState.
+class QiblaCompass extends StatelessWidget {
+  final double qiblaBearing; // fixed bearing from user location to Kaaba
 
   const QiblaCompass({
     super.key,
-    required this.qiblaDirection,
-    required this.deviceDirection,
+    required this.qiblaBearing,
   });
 
-  @override
-  State<QiblaCompass> createState() => _QiblaCompassState();
-}
-
-class _QiblaCompassState extends State<QiblaCompass> {
-  double _targetAngle = 0;
-  bool _hasReading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _updateNeedle(widget.qiblaDirection, widget.deviceDirection);
+  double _normalize(double v) {
+    var r = v % 360;
+    if (r < 0) r += 360;
+    return r;
   }
 
-  @override
-  void didUpdateWidget(covariant QiblaCompass oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.qiblaDirection != widget.qiblaDirection ||
-        oldWidget.deviceDirection != widget.deviceDirection) {
-      _updateNeedle(widget.qiblaDirection, widget.deviceDirection);
-    }
-  }
-
-  double _normalize(double value) {
-    var result = value % 360;
-    if (result < 0) result += 360;
-    return result;
-  }
-
-  double _shortestDelta(double from, double to) {
-    var delta = _normalize(to) - _normalize(from);
-
-    if (delta > 180) {
-      delta -= 360;
-    } else if (delta < -180) {
-      delta += 360;
-    }
-
-    return delta;
-  }
-
-  void _updateNeedle(double qibla, double heading) {
-    if (!qibla.isFinite || !heading.isFinite) return;
-
-    // Bearing relative to the top of the phone/screen.
-    // 0° = straight ahead, 90° = right, 180° = behind, 270° = left.
-    final relativeBearing = _normalize(qibla - heading);
-
-    // QiblaNeedlePainter points to the RIGHT at 0 radians.
-    // Therefore North/straight ahead (0° bearing) needs -90°.
-    final targetRadians = (relativeBearing - 90) * math.pi / 180;
-
-    if (!_hasReading) {
-      _targetAngle = targetRadians;
-      _hasReading = true;
-      return;
-    }
-
-    // Move through the shortest path. This avoids a 359° -> 0° spin.
-    final currentDegrees = _targetAngle * 180 / math.pi;
-    final targetDegrees = targetRadians * 180 / math.pi;
-    final nextDegrees =
-        currentDegrees + _shortestDelta(currentDegrees, targetDegrees);
-
-    _targetAngle = nextDegrees * math.pi / 180;
-
-    if (mounted) setState(() {});
-  }
-
-  bool get _isAligned {
-    final difference = _shortestDelta(
-      widget.deviceDirection,
-      widget.qiblaDirection,
-    ).abs();
-
-    return difference <= 5;
+  /// Needle rotation angle in radians.
+  /// relativeBearing = how many degrees clockwise from the phone's "up" direction
+  /// the Kaaba sits.  We then convert that to a Transform.rotate angle.
+  double _needleAngle(double deviceHeading) {
+    final relative = _normalize(qiblaBearing - deviceHeading);
+    // At 0° the Row widget points right (East). Kaaba at 0° relative (= North)
+    // needs the arrow pointing up → subtract 90°.
+    return (relative - 90) * math.pi / 180;
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 340.w,
-      height: 340.w,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          _outerRing(),
-          _mainCircle(),
-          _compassFace(),
+    return StreamBuilder<CompassEvent>(
+      stream: FlutterCompass.events,
+      builder: (context, snapshot) {
+        // Default heading = 0 (needle points to qibla at static bearing)
+        final heading = snapshot.data?.heading ?? 0.0;
+        final angle = _needleAngle(heading);
 
-          // ONLY the Qibla pointer rotates.
-          // The compass face/N/E/S/W remains fixed.
-          if (_hasReading) _qiblaPointer(),
-
-          _centerDot(),
-          _topIndicator(),
-        ],
-      ),
+        return SizedBox(
+          width: 270.w,
+          height: 270.w,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              _outerRing(),
+              _mainCircle(),
+              _compassFace(),
+              Transform.rotate(
+                angle: angle,
+                child: _pointerRow(),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
   Widget _outerRing() => Container(
-    width: 340.w,
-    height: 340.w,
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      border: Border.all(
-        color: AppColors.prayerCardText.withValues(alpha: 0.35),
-        width: 1,
-      ),
-    ),
-  );
+        width: 260.w,
+        height: 260.w,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: const Color(0xFFECECEC), width: 1.2),
+        ),
+      );
 
   Widget _mainCircle() => Container(
-    width: 290.w,
-    height: 290.w,
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color: AppColors.cardBackground,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.08),
-          blurRadius: 18,
-          offset: const Offset(0, 12),
+        width: 215.w,
+        height: 215.w,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.07),
+              blurRadius: 22,
+              spreadRadius: 2,
+              offset: const Offset(0, 8),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 
   Widget _compassFace() {
     return Container(
-      width: 225.w,
-      height: 225.w,
+      width: 160.w,
+      height: 160.w,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.textMuted.withValues(alpha: 0.08),
-        border: Border.all(color: AppColors.divider, width: 1),
+        color: const Color(0xFFF5F6F5),
+        border: Border.all(color: const Color(0xFFE5E7E5), width: 1),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -181,71 +113,39 @@ class _QiblaCompassState extends State<QiblaCompass> {
   }
 
   Widget _label(String text, Alignment alignment) => Align(
-    alignment: alignment,
-    child: Padding(
-      padding: EdgeInsets.all(18.w),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textSecondary,
-        ),
-      ),
-    ),
-  );
-
-  Widget _qiblaPointer() {
-    // Draw the pointer directly from the latest sensor reading.
-    // No long animation: the pointer must follow the phone immediately.
-    return Transform.rotate(
-      angle: _targetAngle,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.mosque_outlined, size: 18.sp, color: Colors.black),
-          SizedBox(width: 6.w),
-          SizedBox(
-            width: 60.w,
-            height: 22.w,
-            child: const CustomPaint(painter: QiblaNeedlePainter()),
+        alignment: alignment,
+        child: Padding(
+          padding: EdgeInsets.all(10.w),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF4E5855),
+            ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _centerDot() => AnimatedContainer(
-    duration: const Duration(milliseconds: 100),
-    width: _isAligned ? 13.w : 10.w,
-    height: _isAligned ? 13.w : 10.w,
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color: _isAligned ? const Color(0xff00897B) : AppColors.primary,
-      boxShadow: _isAligned
-          ? [
-              BoxShadow(
-                color: const Color(0xff00897B).withValues(alpha: 0.28),
-                blurRadius: 10,
-                spreadRadius: 3,
-              ),
-            ]
-          : null,
-    ),
-  );
-
-  Widget _topIndicator() {
-    return Positioned(
-      top: 8.w,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 100),
-        width: 7.w,
-        height: _isAligned ? 20.w : 16.w,
-        decoration: BoxDecoration(
-          color: _isAligned ? const Color(0xff00897B) : AppColors.accent,
-          borderRadius: BorderRadius.circular(5.r),
         ),
-      ),
+      );
+
+  Widget _pointerRow() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Image.asset(
+          'assets/images/kaaba.png',
+          width: 20.w,
+          height: 20.w,
+          fit: BoxFit.contain,
+        ),
+        SizedBox(width: 4.w),
+        SizedBox(
+          width: 62.w,
+          height: 16.w,
+          child: const CustomPaint(painter: QiblaNeedlePainter()),
+        ),
+        SizedBox(width: 24.w),
+      ],
     );
   }
 }

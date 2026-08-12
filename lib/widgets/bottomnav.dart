@@ -1,70 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
 
 class BottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  const BottomNav({super.key, required this.currentIndex, required this.onTap});
+  const BottomNav({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 72.h,
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24.r),
-          topRight: Radius.circular(24.r),
+          topLeft: Radius.circular(20.r),
+          topRight: Radius.circular(20.r),
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24.r),
-          topRight: Radius.circular(24.r),
-        ),
-        child: SizedBox(
-          height: 70.h,
-          child: BottomNavigationBar(
-            currentIndex: currentIndex,
-            onTap: onTap,
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: AppColors.cardBackground,
-            selectedItemColor: AppColors.navActive,
-            unselectedItemColor: AppColors.navInactive,
-            elevation: 0,
-            selectedLabelStyle: TextStyle(
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w600,
-            ),
-            unselectedLabelStyle: TextStyle(fontSize: 11.sp),
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_rounded),
-                label: "Home",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.menu_book_rounded),
-                label: "Quran",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.access_time_rounded),
-                label: "Prayer",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.more_horiz_rounded),
-                label: "More",
-              ),
-            ],
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _navItem(0, Icons.home_outlined, 'HOME'),
+          _navItem(1, Icons.menu_book_outlined, 'QURAN'),
+          _navItem(2, Icons.access_time_rounded, 'PRAYER'),
+          _navItem(3, Icons.more_horiz_rounded, 'MORE'),
+        ],
+      ),
+    );
+  }
+
+  Widget _navItem(int index, IconData icon, String label) {
+    final isSelected = index == currentIndex;
+    const activeColor = Color(0xFFC5A038); // Gold accent
+    const inactiveColor = Color(0xFF788580); // Muted slate
+
+    return InkWell(
+      onTap: () => onTap(index),
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 22.sp,
+            color: isSelected ? activeColor : inactiveColor,
           ),
-        ),
+          SizedBox(height: 3.h),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10.sp,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+              letterSpacing: 0.8,
+              color: isSelected ? activeColor : inactiveColor,
+            ),
+          ),
+          SizedBox(height: 3.h),
+          // Small gold dot indicator underneath the active tab
+          Container(
+            width: 4.w,
+            height: 4.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? activeColor : Colors.transparent,
+            ),
+          ),
+        ],
       ),
     );
   }
