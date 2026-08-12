@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/screens/qibla/qiblafinder_screen.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/prayer_list.dart';
 
@@ -20,8 +21,6 @@ class PrayersScreen extends StatelessWidget {
             children: [
               SizedBox(height: 20.h),
               NextPrayerCard(),
-
-              //
               SizedBox(height: 30.h),
               Text(
                 "Daily Prayers",
@@ -66,8 +65,11 @@ class PrayersScreen extends StatelessWidget {
                 icon: Icons.explore_outlined,
                 color: const Color.fromARGB(77, 204, 229, 220),
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Qibla Direction tapped")),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const QiblaScreen(),
+                    ),
                   );
                 },
               ),
