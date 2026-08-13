@@ -14,18 +14,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-
-  // Which "sub-view" is showing inside the Prayer tab (index 2) and the
-  // Quran tab (index 1). These live here, not inside PrayersScreen /
-  // QuranScreen, so that HomeScreen can also control them -- that's what
-  // lets tapping a Home container land on the right sub-view *and* the
-  // right bottom-nav tab at the same time.
   bool _prayerShowQibla = false;
   bool _quranShowDuas = false;
 
-  /// Plain tab switch -- used by BottomNav and by Home containers that map
-  /// 1:1 to a tab with no sub-view (e.g. the Quran container).
   void _goToTab(int index) {
+    if (index < 0 || index > 3) return;
     setState(() => _currentIndex = index);
   }
 
@@ -45,6 +38,14 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  /// Jump straight to the More tab (index 3). No sub-view involved here —
+
+  void _openMoreTab() {
+    setState(() {
+      _currentIndex = 3;
+    });
+  }
+
   void _closeQibla() => setState(() => _prayerShowQibla = false);
 
   void _closeDuas() => setState(() => _quranShowDuas = false);
@@ -56,13 +57,14 @@ class _MainScreenState extends State<MainScreen> {
         onNavigateToTab: _goToTab,
         onOpenQibla: _openQiblaOnPrayerTab,
         onOpenDuas: _openDuasOnQuranTab,
+        onOpenMore: _openMoreTab,
       ),
       QuranScreen(showDuas: _quranShowDuas, onCloseDuas: _closeDuas),
       PrayersScreen(
         showQibla: _prayerShowQibla,
         onOpenQibla: _openQiblaOnPrayerTab,
         onCloseQibla: _closeQibla,
-      ), // Index 2: Prayer Screen
+      ),
       const MoreScreen(),
     ];
 

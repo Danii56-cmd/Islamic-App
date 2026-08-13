@@ -10,12 +10,14 @@ class HomeScreen extends StatelessWidget {
   final void Function(int index)? onNavigateToTab;
   final VoidCallback? onOpenQibla;
   final VoidCallback? onOpenDuas;
+  final VoidCallback? onOpenMore;
 
   const HomeScreen({
     super.key,
     this.onNavigateToTab,
     this.onOpenQibla,
     this.onOpenDuas,
+    this.onOpenMore,
   });
 
   @override
@@ -117,9 +119,6 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.menu_book_rounded,
                       title: "Quran",
                       onTap: () {
-                        // Quran is tab index 1 in BottomNav — switch tabs
-                        // instead of pushing a new route, so the bottom
-                        // nav stays visible and no back button appears.
                         onNavigateToTab?.call(1);
                       },
                     ),
@@ -132,7 +131,6 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.volunteer_activism_outlined,
                       title: "Duas",
                       onTap: () {
-                        // Duas lives inside the Quran tab (index 1).
                         onOpenDuas?.call();
                       },
                     ),
@@ -144,7 +142,9 @@ class HomeScreen extends StatelessWidget {
                     _featureCard(
                       icon: Icons.bubble_chart,
                       title: "More",
-                      onTap: () {},
+                      onTap: () {
+                        onOpenMore?.call();
+                      },
                     ),
                   ],
                 ),
