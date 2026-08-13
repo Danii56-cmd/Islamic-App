@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:islamic_app/core/appcolors.dart';
 
 class BottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  const BottomNav({
-    super.key,
-    required this.currentIndex,
-    required this.onTap,
-  });
+  const BottomNav({super.key, required this.currentIndex, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +40,8 @@ class BottomNav extends StatelessWidget {
 
   Widget _navItem(int index, IconData icon, String label) {
     final isSelected = index == currentIndex;
-    const activeColor = Color(0xFFC5A038); // Gold accent
-    const inactiveColor = Color(0xFF788580); // Muted slate
+    const activeColor = AppColors.accent;
+    const inactiveColor = AppColors.textMuted;
 
     return InkWell(
       onTap: () => onTap(index),

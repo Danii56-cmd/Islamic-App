@@ -7,7 +7,16 @@ import 'package:islamic_app/widgets/header_text.dart';
 import 'package:islamic_app/widgets/upcoming_prayer.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final void Function(int index)? onNavigateToTab;
+  final VoidCallback? onOpenQibla;
+  final VoidCallback? onOpenDuas;
+
+  const HomeScreen({
+    super.key,
+    this.onNavigateToTab,
+    this.onOpenQibla,
+    this.onOpenDuas,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -100,12 +109,19 @@ class HomeScreen extends StatelessWidget {
                     _featureCard(
                       icon: Icons.explore_outlined,
                       title: "Qibla",
-                      onTap: () {},
+                      onTap: () {
+                        onOpenQibla?.call();
+                      },
                     ),
                     _featureCard(
                       icon: Icons.menu_book_rounded,
                       title: "Quran",
-                      onTap: () {},
+                      onTap: () {
+                        // Quran is tab index 1 in BottomNav — switch tabs
+                        // instead of pushing a new route, so the bottom
+                        // nav stays visible and no back button appears.
+                        onNavigateToTab?.call(1);
+                      },
                     ),
                     _featureCard(
                       icon: Icons.history_edu,
@@ -115,7 +131,10 @@ class HomeScreen extends StatelessWidget {
                     _featureCard(
                       icon: Icons.volunteer_activism_outlined,
                       title: "Duas",
-                      onTap: () {},
+                      onTap: () {
+                        // Duas lives inside the Quran tab (index 1).
+                        onOpenDuas?.call();
+                      },
                     ),
                     _featureCard(
                       icon: Icons.calendar_month_rounded,
@@ -220,6 +239,7 @@ Widget _featureCard({
   required VoidCallback onTap,
 }) {
   return GestureDetector(
+    onTap: onTap,
     child: Container(
       decoration: BoxDecoration(
         color: AppColors.cardBackground,

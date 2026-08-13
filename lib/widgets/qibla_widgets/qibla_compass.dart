@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter_compass/flutter_compass.dart';
+import 'package:flutter_compass_v2/flutter_compass_v2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_needle.dart';
 
@@ -10,10 +10,7 @@ import 'package:islamic_app/widgets/qibla_widgets/qibla_needle.dart';
 class QiblaCompass extends StatelessWidget {
   final double qiblaBearing; // fixed bearing from user location to Kaaba
 
-  const QiblaCompass({
-    super.key,
-    required this.qiblaBearing,
-  });
+  const QiblaCompass({super.key, required this.qiblaBearing});
 
   double _normalize(double v) {
     var r = v % 360;
@@ -49,10 +46,7 @@ class QiblaCompass extends StatelessWidget {
               _outerRing(),
               _mainCircle(),
               _compassFace(),
-              Transform.rotate(
-                angle: angle,
-                child: _pointerRow(),
-              ),
+              Transform.rotate(angle: angle, child: _pointerRow()),
             ],
           ),
         );
@@ -61,35 +55,35 @@ class QiblaCompass extends StatelessWidget {
   }
 
   Widget _outerRing() => Container(
-        width: 260.w,
-        height: 260.w,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFFECECEC), width: 1.2),
-        ),
-      );
+    width: 260.w,
+    height: 260.w,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      border: Border.all(color: const Color(0xFFECECEC), width: 1.2),
+    ),
+  );
 
   Widget _mainCircle() => Container(
-        width: 215.w,
-        height: 215.w,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.07),
-              blurRadius: 22,
-              spreadRadius: 2,
-              offset: const Offset(0, 8),
-            ),
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+    width: 215.w,
+    height: 215.w,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: Colors.white,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.07),
+          blurRadius: 22,
+          spreadRadius: 2,
+          offset: const Offset(0, 8),
         ),
-      );
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.02),
+          blurRadius: 6,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+  );
 
   Widget _compassFace() {
     return Container(
@@ -113,19 +107,19 @@ class QiblaCompass extends StatelessWidget {
   }
 
   Widget _label(String text, Alignment alignment) => Align(
-        alignment: alignment,
-        child: Padding(
-          padding: EdgeInsets.all(10.w),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF4E5855),
-            ),
-          ),
+    alignment: alignment,
+    child: Padding(
+      padding: EdgeInsets.all(10.w),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 13.sp,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFF4E5855),
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _pointerRow() {
     return Row(

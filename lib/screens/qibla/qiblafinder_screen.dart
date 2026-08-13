@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter_compass/flutter_compass.dart';
+import 'package:flutter_compass_v2/flutter_compass_v2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:islamic_app/widgets/appbar.dart';
@@ -13,15 +13,15 @@ import 'package:islamic_app/widgets/qibla_widgets/qibla_map_view.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_toggle.dart';
 import 'package:latlong2/latlong.dart';
 
-class QiblaScreen extends StatefulWidget {
+class QiblaFinderScreen extends StatefulWidget {
   final VoidCallback? onBack;
-  const QiblaScreen({super.key, this.onBack});
+  const QiblaFinderScreen({super.key, this.onBack});
 
   @override
-  State<QiblaScreen> createState() => _QiblaScreenState();
+  State<QiblaFinderScreen> createState() => _QiblaFinderScreenState();
 }
 
-class _QiblaScreenState extends State<QiblaScreen> {
+class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
   bool isMapSelected = false;
 
   // Fixed bearing from user's GPS to Kaaba (degrees from North, clockwise)
@@ -44,7 +44,11 @@ class _QiblaScreenState extends State<QiblaScreen> {
   Future<void> _init() async {
     // 1. Check sensor
     if (FlutterCompass.events == null) {
-      if (mounted) setState(() { noSensor = true; isLoading = false; });
+      if (mounted)
+        setState(() {
+          noSensor = true;
+          isLoading = false;
+        });
       return;
     }
 
@@ -64,7 +68,9 @@ class _QiblaScreenState extends State<QiblaScreen> {
     // 3. Get GPS fix
     try {
       final pos = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       ).timeout(const Duration(seconds: 6));
 
       if (!mounted) return;
@@ -83,7 +89,8 @@ class _QiblaScreenState extends State<QiblaScreen> {
     final lat2 = kaabaLat * math.pi / 180;
     final dLng = (kaabaLng - lng) * math.pi / 180;
     final y = math.sin(dLng) * math.cos(lat2);
-    final x = math.cos(lat1) * math.sin(lat2) -
+    final x =
+        math.cos(lat1) * math.sin(lat2) -
         math.sin(lat1) * math.cos(lat2) * math.cos(dLng);
     return ((math.atan2(y, x) * 180 / math.pi) + 360) % 360;
   }
@@ -105,9 +112,12 @@ class _QiblaScreenState extends State<QiblaScreen> {
     final lat2 = kaabaLat * math.pi / 180;
     final dLat = (kaabaLat - lat) * math.pi / 180;
     final dLng = (kaabaLng - lng) * math.pi / 180;
-    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(lat1) * math.cos(lat2) *
-            math.sin(dLng / 2) * math.sin(dLng / 2);
+    final a =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(lat1) *
+            math.cos(lat2) *
+            math.sin(dLng / 2) *
+            math.sin(dLng / 2);
     final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
     return R * c;
   }
@@ -215,12 +225,19 @@ class _QiblaScreenState extends State<QiblaScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.sensors_off, size: 48.sp, color: const Color(0xFF9CA3AF)),
+              Icon(
+                Icons.sensors_off,
+                size: 48.sp,
+                color: const Color(0xFF9CA3AF),
+              ),
               SizedBox(height: 16.h),
               Text(
                 'No compass sensor detected on this device.\nPlease use the Map view instead.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14.sp, color: const Color(0xFF5E6966)),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: const Color(0xFF5E6966),
+                ),
               ),
             ],
           ),
@@ -280,7 +297,9 @@ class _QiblaScreenState extends State<QiblaScreen> {
             SizedBox(height: 16.h),
             QiblaLocationRow(
               currentPosition: currentPosition,
-              locationName: currentPosition == null ? 'London, United Kingdom' : null,
+              locationName: currentPosition == null
+                  ? 'London, United Kingdom'
+                  : null,
             ),
             SizedBox(height: 12.h),
           ],

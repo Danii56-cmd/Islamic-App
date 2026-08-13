@@ -5,22 +5,25 @@ import 'package:islamic_app/screens/qibla/qiblafinder_screen.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/prayer_list.dart';
 
-class PrayersScreen extends StatefulWidget {
-  const PrayersScreen({super.key});
+class PrayersScreen extends StatelessWidget {
+  /// Whether the Qibla compass sub-view should be showing right now
+  /// (controlled by MainScreen, so Home's Qibla container can trigger it
+  /// too, not just the "Qibla Direction" card below).
+  final bool showQibla;
+  final VoidCallback onOpenQibla;
+  final VoidCallback onCloseQibla;
 
-  @override
-  State<PrayersScreen> createState() => _PrayersScreenState();
-}
-
-class _PrayersScreenState extends State<PrayersScreen> {
-  bool _showQibla = false;
+  const PrayersScreen({
+    super.key,
+    required this.showQibla,
+    required this.onOpenQibla,
+    required this.onCloseQibla,
+  });
 
   @override
   Widget build(BuildContext context) {
-    if (_showQibla) {
-      return QiblaScreen(
-        onBack: () => setState(() => _showQibla = false),
-      );
+    if (showQibla) {
+      return QiblaFinderScreen(onBack: onCloseQibla);
     }
 
     return Scaffold(
@@ -78,11 +81,7 @@ class _PrayersScreenState extends State<PrayersScreen> {
                 value: "142° SE",
                 icon: Icons.explore_outlined,
                 color: const Color.fromARGB(77, 204, 229, 220),
-                onTap: () {
-                  setState(() {
-                    _showQibla = true;
-                  });
-                },
+                onTap: onOpenQibla,
               ),
               SizedBox(height: 15.h),
               // Method
