@@ -100,7 +100,7 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
     super.dispose();
   }
 
-  // ── Distance (Haversine) ─────────────────────────────────────────────────────
+  // Distance
 
   double get _distanceKm {
     final lat = currentPosition?.latitude ?? 51.5074;
@@ -140,7 +140,7 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
 
   LatLng get _kaabaLatLng => const LatLng(kaabaLat, kaabaLng);
 
-  // ── Build ────────────────────────────────────────────────────────────────────
+  // Build
 
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,12 @@
 // ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hijri/hijri_calendar.dart';
+
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/core/appconstants.dart';
-import 'package:islamic_app/widgets/appbar.dart';
+
 import 'package:islamic_app/widgets/islamiccalendr_widgets/calendar_grid.dart';
 import 'package:islamic_app/widgets/islamiccalendr_widgets/calendar_header.dart';
 import 'package:islamic_app/widgets/islamiccalendr_widgets/event_card.dart';
@@ -12,7 +14,9 @@ import 'package:islamic_app/widgets/islamiccalendr_widgets/event_schedule_sectio
 import 'package:islamic_app/widgets/islamiccalendr_widgets/islamic_info_card.dart';
 
 class IslamicCalendarScreen extends StatefulWidget {
-  const IslamicCalendarScreen({super.key});
+  final VoidCallback? onBack;
+
+  const IslamicCalendarScreen({super.key, this.onBack});
 
   @override
   State<IslamicCalendarScreen> createState() => _IslamicCalendarScreenState();
@@ -20,7 +24,6 @@ class IslamicCalendarScreen extends StatefulWidget {
 
 class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
   DateTime _visibleMonth = DateTime.now();
-
   DateTime _selectedDate = DateTime.now();
 
   void _previousMonth() {
@@ -38,15 +41,13 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
   String _getCurrentHijri() {
     final hijri = HijriCalendar.fromDate(_selectedDate);
 
-    return '${hijri.getLongMonthName()} '
-        '${hijri.hYear} AH';
+    return '${hijri.getLongMonthName()} ${hijri.hYear} AH';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
-      appBar: const Appbar(),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -54,6 +55,47 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 10.h),
+
+              // Back Button + Title
+              Row(
+                children: [
+                  if (widget.onBack != null) ...[
+                    InkWell(
+                      onTap: widget.onBack,
+                      borderRadius: BorderRadius.circular(20.r),
+                      child: Container(
+                        padding: EdgeInsets.all(10.w),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF2F4F3),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 16.sp,
+                          color: const Color(0xFF003831),
+                        ),
+                      ),
+                    ),
+                  ],
+
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        'Islamic Calendar',
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Keeps title centered
+                  if (widget.onBack != null) SizedBox(width: 36.w),
+                ],
+              ),
               SizedBox(height: 20.h),
               CalendarHeader(
                 hijriDate: _getCurrentHijri(),
@@ -68,26 +110,8 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                     _selectedDate = date;
                   });
                 },
-
-                onPreviousMonth: () {
-                  setState(() {
-                    _visibleMonth = DateTime(
-                      _visibleMonth.year,
-                      _visibleMonth.month - 1,
-                      1,
-                    );
-                  });
-                },
-
-                onNextMonth: () {
-                  setState(() {
-                    _visibleMonth = DateTime(
-                      _visibleMonth.year,
-                      _visibleMonth.month + 1,
-                      1,
-                    );
-                  });
-                },
+                onPreviousMonth: _previousMonth,
+                onNextMonth: _nextMonth,
               ),
               SizedBox(height: 30.h),
               UpcomingEventCard(
@@ -117,6 +141,7 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                     'Learn about the four sacred months '
                     'in Islam and their unique virtues.',
               ),
+              SizedBox(height: 20.h),
             ],
           ),
         ),

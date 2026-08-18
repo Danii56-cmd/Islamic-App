@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/core/appconstants.dart';
-
 import 'package:islamic_app/screens/calendar/islamiccalendar_screen.dart';
-
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/header_text.dart';
 import 'package:islamic_app/widgets/upcoming_prayer.dart';
 
 class HomeScreen extends StatelessWidget {
   final void Function(int index)? onNavigateToTab;
-
   final bool showCalendar;
+  final VoidCallback onOpenCalendar;
   final VoidCallback onCloseCalendar;
-
-  final VoidCallback? onOpenCalendar;
   final VoidCallback? onOpenQibla;
   final VoidCallback? onOpenDuas;
   final VoidCallback? onOpenMore;
@@ -25,8 +20,8 @@ class HomeScreen extends StatelessWidget {
     super.key,
     this.onNavigateToTab,
     this.showCalendar = false,
+    required this.onOpenCalendar,
     required this.onCloseCalendar,
-    this.onOpenCalendar,
     this.onOpenQibla,
     this.onOpenDuas,
     this.onOpenMore,
@@ -34,219 +29,151 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (showCalendar) {
-      return Scaffold(
-        backgroundColor: AppColors.scaffoldBackground,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: onCloseCalendar,
-                      child: Container(
-                        width: 40.r,
-                        height: 40.r,
-                        decoration: BoxDecoration(
-                          color: AppColors.cardBackground,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.shadow,
-                              blurRadius: 5.r,
-                              offset: Offset(0, 2.h),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: AppColors.textPrimary,
-                          size: 20.sp,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 14.w),
-                    Text(
-                      "Islamic Calendar",
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(child: const IslamicCalendarScreen()),
-            ],
-          ),
-        ),
-      );
-    }
-
-    // Normal Home screen
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       appBar: const Appbar(),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 20.h),
-
-              Text(
-                "ASSALAMU ALAIKUM, AHMAD",
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textMuted,
-                  letterSpacing: 0.8,
-                ),
-              ),
-              SizedBox(height: 10.h),
-              const HeaderText(text: "A Moment for Reflection"),
-              SizedBox(height: 10.h),
-
-              // Hadith Card
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.cardBackground,
-                  borderRadius: BorderRadius.circular(20.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.shadow,
-                      blurRadius: 5.r,
-                      offset: Offset(0, 2.h),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 20.h,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "99",
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w700,
-                          color: const Color.fromARGB(255, 115, 92, 0),
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
-                      Text(
-                        "The best among you are those who have the best manners and character.",
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textSecondary,
-                          height: 1.4,
-                        ),
-                      ),
-                      SizedBox(height: 16.h),
-                      Text(
-                        "— Sahih Bukhari",
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              const UpcomingPrayer(),
-              SizedBox(height: 25.h),
-
-              // Feature Cards
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 2.w),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1.5,
-                  crossAxisSpacing: 16.w,
-                  mainAxisSpacing: 14.h,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+      body: showCalendar
+          ? IslamicCalendarScreen(onBack: onCloseCalendar)
+          : Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Qibla
-                    _featureCard(
-                      icon: Icons.explore_outlined,
-                      title: "Qibla",
-                      onTap: () {
-                        onOpenQibla?.call();
-                      },
+                    SizedBox(height: 20.h),
+                    Text(
+                      "ASSALAMU ALAIKUM, AHMAD",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textMuted,
+                        letterSpacing: 0.8,
+                      ),
                     ),
-
-                    // Quran
-                    _featureCard(
-                      icon: Icons.menu_book_rounded,
-                      title: "Quran",
-                      onTap: () {
-                        onNavigateToTab?.call(1);
-                      },
+                    SizedBox(height: 10.h),
+                    const HeaderText(text: "A Moment for Reflection"),
+                    SizedBox(height: 10.h),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppColors.cardBackground,
+                        borderRadius: BorderRadius.circular(20.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.shadow,
+                            blurRadius: 5.r,
+                            offset: Offset(0, 2.h),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 20.h,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "99",
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w700,
+                                color: const Color.fromARGB(255, 115, 92, 0),
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            Text(
+                              "The best among you are those who have the best manners and character.",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textSecondary,
+                                height: 1.4,
+                              ),
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              "— Sahih Bukhari",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-
-                    // Hadith
-                    _featureCard(
-                      icon: Icons.history_edu,
-                      title: "Hadith",
-                      onTap: () {},
+                    SizedBox(height: 20.h),
+                    const UpcomingPrayer(),
+                    SizedBox(height: 25.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 2.w),
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        childAspectRatio: 1.5,
+                        crossAxisSpacing: 16.w,
+                        mainAxisSpacing: 14.h,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          _featureCard(
+                            icon: Icons.explore_outlined,
+                            title: "Qibla",
+                            onTap: () {
+                              onOpenQibla?.call();
+                            },
+                          ),
+                          _featureCard(
+                            icon: Icons.menu_book_rounded,
+                            title: "Quran",
+                            onTap: () {
+                              onNavigateToTab?.call(1);
+                            },
+                          ),
+                          _featureCard(
+                            icon: Icons.history_edu,
+                            title: "Hadith",
+                            onTap: () {},
+                          ),
+                          _featureCard(
+                            icon: Icons.volunteer_activism_outlined,
+                            title: "Duas",
+                            onTap: () {
+                              onOpenDuas?.call();
+                            },
+                          ),
+                          _featureCard(
+                            icon: Icons.calendar_month_rounded,
+                            title: "Islamic Calendar",
+                            onTap: () {
+                              onOpenCalendar();
+                            },
+                          ),
+                          _featureCard(
+                            icon: Icons.bubble_chart,
+                            title: "More",
+                            onTap: () {
+                              onOpenMore?.call();
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-
-                    // Duas
-                    _featureCard(
-                      icon: Icons.volunteer_activism_outlined,
-                      title: "Duas",
-                      onTap: () {
-                        onOpenDuas?.call();
-                      },
-                    ),
-
-                    // Islamic Calendar
-                    _featureCard(
-                      icon: Icons.calendar_month_rounded,
-                      title: "Islamic Calendar",
-                      onTap: () {
-                        onOpenCalendar?.call();
-                      },
-                    ),
-
-                    // More
-                    _featureCard(
-                      icon: Icons.bubble_chart,
-                      title: "More",
-                      onTap: () {
-                        onOpenMore?.call();
-                      },
-                    ),
+                    SizedBox(height: 20.h),
+                    const JournalContainer(),
+                    SizedBox(height: 30.h),
                   ],
                 ),
               ),
-              SizedBox(height: 20.h),
-              const JournalContainer(),
-              SizedBox(height: 30.h),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
 
-// Journal Container
 class JournalContainer extends StatelessWidget {
   const JournalContainer({super.key});
 
@@ -321,8 +248,6 @@ class JournalContainer extends StatelessWidget {
   }
 }
 
-// Feature Card
-
 Widget _featureCard({
   required IconData icon,
   required String title,
@@ -357,9 +282,7 @@ Widget _featureCard({
               ),
               child: Icon(icon, color: AppColors.primary, size: 20.sp),
             ),
-
             SizedBox(height: 6.h),
-
             Flexible(
               child: Text(
                 title,
