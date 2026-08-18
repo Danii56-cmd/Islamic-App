@@ -16,13 +16,22 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   bool _prayerShowQibla = false;
   bool _quranShowDuas = false;
+  bool _homeShowCalendar = false;
 
   void _goToTab(int index) {
     if (index < 0 || index > 3) return;
     setState(() => _currentIndex = index);
   }
 
-  /// Jump straight to the Qibla compass, inside the Prayer tab (index 2).
+  // Jump straight to the Calendar, inside the Home tab (index 0).
+  void _openCalendarOnHomeTab() {
+    setState(() {
+      _currentIndex = 0;
+      _homeShowCalendar = true;
+    });
+  }
+
+  // Jump straight to the Qibla compass, inside the Prayer tab (index 2).
   void _openQiblaOnPrayerTab() {
     setState(() {
       _currentIndex = 2;
@@ -30,7 +39,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  /// Jump straight to Duas, inside the Quran tab (index 1).
+  // Jump straight to Duas, inside the Quran tab (index 1).
   void _openDuasOnQuranTab() {
     setState(() {
       _currentIndex = 1;
@@ -38,7 +47,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  /// Jump straight to the More tab (index 3). No sub-view involved here —
+  // Jump straight to the More tab (index 3). No sub-view involved here —
 
   void _openMoreTab() {
     setState(() {
@@ -46,15 +55,23 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void _closeQibla() => setState(() => _prayerShowQibla = false);
+  void _closeCalendar() {
+    setState(() {
+      _homeShowCalendar = false;
+    });
+  }
 
+  void _closeQibla() => setState(() => _prayerShowQibla = false);
   void _closeDuas() => setState(() => _quranShowDuas = false);
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [
       HomeScreen(
+        showCalendar: _homeShowCalendar,
+        onCloseCalendar: _closeCalendar,
         onNavigateToTab: _goToTab,
+        onOpenCalendar: _openCalendarOnHomeTab,
         onOpenQibla: _openQiblaOnPrayerTab,
         onOpenDuas: _openDuasOnQuranTab,
         onOpenMore: _openMoreTab,

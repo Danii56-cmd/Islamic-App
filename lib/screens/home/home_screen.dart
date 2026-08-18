@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/core/appconstants.dart';
+
 import 'package:islamic_app/screens/calendar/islamiccalendar_screen.dart';
+
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/header_text.dart';
 import 'package:islamic_app/widgets/upcoming_prayer.dart';
 
 class HomeScreen extends StatelessWidget {
   final void Function(int index)? onNavigateToTab;
+
+  final bool showCalendar;
+  final VoidCallback onCloseCalendar;
+
+  final VoidCallback? onOpenCalendar;
   final VoidCallback? onOpenQibla;
   final VoidCallback? onOpenDuas;
   final VoidCallback? onOpenMore;
@@ -16,6 +24,9 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({
     super.key,
     this.onNavigateToTab,
+    this.showCalendar = false,
+    required this.onCloseCalendar,
+    this.onOpenCalendar,
     this.onOpenQibla,
     this.onOpenDuas,
     this.onOpenMore,
@@ -23,6 +34,59 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (showCalendar) {
+      return Scaffold(
+        backgroundColor: AppColors.scaffoldBackground,
+        body: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: onCloseCalendar,
+                      child: Container(
+                        width: 40.r,
+                        height: 40.r,
+                        decoration: BoxDecoration(
+                          color: AppColors.cardBackground,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.shadow,
+                              blurRadius: 5.r,
+                              offset: Offset(0, 2.h),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: AppColors.textPrimary,
+                          size: 20.sp,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 14.w),
+                    Text(
+                      "Islamic Calendar",
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(child: const IslamicCalendarScreen()),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Normal Home screen
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       appBar: const Appbar(),
@@ -34,6 +98,7 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20.h),
+
               Text(
                 "ASSALAMU ALAIKUM, AHMAD",
                 style: TextStyle(
@@ -46,6 +111,8 @@ class HomeScreen extends StatelessWidget {
               SizedBox(height: 10.h),
               const HeaderText(text: "A Moment for Reflection"),
               SizedBox(height: 10.h),
+
+              // Hadith Card
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -102,6 +169,8 @@ class HomeScreen extends StatelessWidget {
               SizedBox(height: 20.h),
               const UpcomingPrayer(),
               SizedBox(height: 25.h),
+
+              // Feature Cards
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 2.w),
                 child: GridView.count(
@@ -112,6 +181,7 @@ class HomeScreen extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
+                    // Qibla
                     _featureCard(
                       icon: Icons.explore_outlined,
                       title: "Qibla",
@@ -119,6 +189,8 @@ class HomeScreen extends StatelessWidget {
                         onOpenQibla?.call();
                       },
                     ),
+
+                    // Quran
                     _featureCard(
                       icon: Icons.menu_book_rounded,
                       title: "Quran",
@@ -126,11 +198,15 @@ class HomeScreen extends StatelessWidget {
                         onNavigateToTab?.call(1);
                       },
                     ),
+
+                    // Hadith
                     _featureCard(
                       icon: Icons.history_edu,
                       title: "Hadith",
                       onTap: () {},
                     ),
+
+                    // Duas
                     _featureCard(
                       icon: Icons.volunteer_activism_outlined,
                       title: "Duas",
@@ -138,18 +214,17 @@ class HomeScreen extends StatelessWidget {
                         onOpenDuas?.call();
                       },
                     ),
+
+                    // Islamic Calendar
                     _featureCard(
                       icon: Icons.calendar_month_rounded,
                       title: "Islamic Calendar",
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const IslamicCalendarScreen(),
-                          ),
-                        );
+                        onOpenCalendar?.call();
                       },
                     ),
+
+                    // More
                     _featureCard(
                       icon: Icons.bubble_chart,
                       title: "More",
@@ -171,6 +246,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+// Journal Container
 class JournalContainer extends StatelessWidget {
   const JournalContainer({super.key});
 
@@ -245,6 +321,8 @@ class JournalContainer extends StatelessWidget {
   }
 }
 
+// Feature Card
+
 Widget _featureCard({
   required IconData icon,
   required String title,
@@ -279,7 +357,9 @@ Widget _featureCard({
               ),
               child: Icon(icon, color: AppColors.primary, size: 20.sp),
             ),
+
             SizedBox(height: 6.h),
+
             Flexible(
               child: Text(
                 title,

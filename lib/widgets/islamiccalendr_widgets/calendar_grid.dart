@@ -7,6 +7,8 @@ import 'calendar_day.dart';
 class CalendarGrid extends StatelessWidget {
   final DateTime visibleMonth;
   final DateTime selectedDate;
+  final VoidCallback onNextMonth;
+  final VoidCallback onPreviousMonth;
   final Function(DateTime) onDateSelected;
 
   const CalendarGrid({
@@ -14,8 +16,8 @@ class CalendarGrid extends StatelessWidget {
     required this.visibleMonth,
     required this.selectedDate,
     required this.onDateSelected,
-    required void Function() onNextMonth,
-    required void Function() onPreviousMonth,
+    required this.onNextMonth,
+    required this.onPreviousMonth,
   });
 
   String _monthName(int month) {
@@ -126,22 +128,17 @@ class CalendarGrid extends StatelessWidget {
                 children: [
                   _NavigationButton(
                     icon: Icons.chevron_left_rounded,
-                    onTap: () {
-                      // onPreviousMonth();
-                    },
+                    onTap: onPreviousMonth,
                   ),
                   SizedBox(width: 7.w),
                   _NavigationButton(
                     icon: Icons.chevron_right_rounded,
-                    onTap: () {
-                      // onNextMonth();
-                    },
+                    onTap: onNextMonth,
                   ),
                 ],
               ),
             ],
           ),
-
           SizedBox(height: 25.h),
 
           // Weekdays

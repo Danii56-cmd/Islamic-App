@@ -68,8 +68,26 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                     _selectedDate = date;
                   });
                 },
-                onPreviousMonth: _previousMonth,
-                onNextMonth: _nextMonth,
+
+                onPreviousMonth: () {
+                  setState(() {
+                    _visibleMonth = DateTime(
+                      _visibleMonth.year,
+                      _visibleMonth.month - 1,
+                      1,
+                    );
+                  });
+                },
+
+                onNextMonth: () {
+                  setState(() {
+                    _visibleMonth = DateTime(
+                      _visibleMonth.year,
+                      _visibleMonth.month + 1,
+                      1,
+                    );
+                  });
+                },
               ),
               SizedBox(height: 30.h),
               UpcomingEventCard(
