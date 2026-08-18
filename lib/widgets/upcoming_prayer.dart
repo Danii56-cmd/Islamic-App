@@ -24,7 +24,6 @@ class _UpcomingPrayerState extends State<UpcomingPrayer> {
 
     return Container(
       width: double.infinity,
-      height: 200.h,
       decoration: BoxDecoration(
         color: AppColors.primary,
         borderRadius: BorderRadius.circular(20.r),
@@ -37,44 +36,45 @@ class _UpcomingPrayerState extends State<UpcomingPrayer> {
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 20.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // TOP SECTION
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "UPCOMING PRAYER\n",
-                        style: TextStyle(
-                          color: AppColors.prayerCardText,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 1.2,
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "UPCOMING PRAYER\n",
+                          style: TextStyle(
+                            color: AppColors.prayerCardText,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 1.2,
+                          ),
                         ),
-                      ),
-                      TextSpan(
-                        text: "Asr",
-                        style: TextStyle(
-                          fontSize: 28.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textOnPrimary,
+                        TextSpan(
+                          text: "Asr",
+                          style: TextStyle(
+                            fontSize: 28.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textOnPrimary,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-
-                const Spacer(),
+                SizedBox(width: 10.w),
 
                 // Countdown
                 Container(
-                  height: 36.h,
-                  width: 105.w,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                   decoration: BoxDecoration(
                     color: AppColors.accent,
                     borderRadius: BorderRadius.circular(20.r),
@@ -100,38 +100,39 @@ class _UpcomingPrayerState extends State<UpcomingPrayer> {
               ],
             ),
 
-            SizedBox(height: 30.h),
+            SizedBox(height: 16.h),
 
             // DIVIDER
-            Divider(thickness: 0.3, height: 1, color: AppColors.divider),
+            const Divider(thickness: 0.3, height: 1, color: AppColors.divider),
 
-            SizedBox(height: 8.h),
+            SizedBox(height: 12.h),
 
             // PRAYER TIMES
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: prayers.map((prayer) {
-                  final String name = prayer["name"]!;
-                  final String time = prayer["time"]!;
+            Row(
+              children: prayers.map((prayer) {
+                final String name = prayer["name"]!;
+                final String time = prayer["time"]!;
 
-                  // Check each individual prayer
-                  final bool isActive = name == activePrayer;
+                // Check each individual prayer
+                final bool isActive = name == activePrayer;
 
-                  return GestureDetector(
+                return Expanded(
+                  child: GestureDetector(
                     onTap: () {},
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      width: 50.w,
-                      height: 60.h,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 2.w,
+                        vertical: 8.h,
+                      ),
                       decoration: BoxDecoration(
                         color: isActive
                             ? AppColors.accentLight
                             : Colors.transparent,
-                        borderRadius: BorderRadius.circular(16.r),
+                        borderRadius: BorderRadius.circular(14.r),
                       ),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             name,
@@ -139,10 +140,11 @@ class _UpcomingPrayerState extends State<UpcomingPrayer> {
                               color: isActive
                                   ? AppColors.accent
                                   : AppColors.prayerCardText,
-                              fontSize: 9.sp,
+                              fontSize: 10.sp,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
+                          SizedBox(height: 4.h),
                           Text(
                             time,
                             style: TextStyle(
@@ -156,9 +158,9 @@ class _UpcomingPrayerState extends State<UpcomingPrayer> {
                         ],
                       ),
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              }).toList(),
             ),
           ],
         ),

@@ -34,7 +34,7 @@ class _PrayerListState extends State<PrayerList> {
         final bool isActive = name == activePrayer;
 
         return Padding(
-          padding: EdgeInsets.only(bottom: 15.h),
+          padding: EdgeInsets.only(bottom: 12.h),
           child: GestureDetector(
             onTap: () {
               setState(() {
@@ -42,38 +42,46 @@ class _PrayerListState extends State<PrayerList> {
               });
             },
             child: Container(
-              height: 80.h,
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               decoration: BoxDecoration(
                 color: isActive ? AppColors.primary : AppColors.cardBackground,
                 borderRadius: BorderRadius.circular(18.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadow.withValues(alpha: 0.04),
+                    blurRadius: 6.r,
+                    offset: Offset(0, 2.h),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
                   // Prayer Icon
                   Container(
-                    width: 48.w,
-                    height: 48.h,
+                    width: 44.r,
+                    height: 44.r,
                     decoration: BoxDecoration(
                       color: isActive
                           ? AppColors.primaryLight
                           : AppColors.scaffoldBackground,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      icon,
-                      size: 24.sp,
-                      color: isActive ? AppColors.accent : AppColors.textMuted,
+                    child: Center(
+                      child: Icon(
+                        icon,
+                        size: 22.sp,
+                        color: isActive ? AppColors.accent : AppColors.textMuted,
+                      ),
                     ),
                   ),
 
-                  SizedBox(width: 20.w),
+                  SizedBox(width: 16.w),
 
                   // Prayer Name & Time
                   Expanded(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(

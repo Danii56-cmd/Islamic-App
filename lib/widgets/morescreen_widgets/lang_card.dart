@@ -12,6 +12,7 @@ class LanguageCard extends StatelessWidget {
       backgroundColor: AppColors.textMuted.withValues(alpha: 0.1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
@@ -34,14 +35,16 @@ class LanguageCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 18.h),
           Text(
             "Language",
-            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
           ),
-
           SizedBox(height: 3.h),
-
           Text(
             "Selected: English (US)",
             style: TextStyle(fontSize: 12.sp, color: AppColors.textMuted),

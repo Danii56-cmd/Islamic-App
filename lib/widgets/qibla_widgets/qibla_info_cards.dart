@@ -49,10 +49,14 @@ class QiblaInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 98.h,
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14.r),
+        border: Border(
+          left: BorderSide(color: accentColor, width: 4.w),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -61,47 +65,27 @@ class QiblaInfoCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Vertical accent bar on the left
-          Container(
-            width: 4.w,
-            decoration: BoxDecoration(
-              color: accentColor,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(14.r),
-                bottomLeft: Radius.circular(14.r),
-              ),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 10.sp,
+              letterSpacing: 1.1,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textSecondary,
             ),
           ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      letterSpacing: 1.1,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  SizedBox(height: 6.h),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      height: 1.25,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ],
-              ),
+          SizedBox(height: 6.h),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 17.sp,
+              height: 1.25,
+              fontWeight: FontWeight.w800,
+              color: AppColors.primary,
             ),
           ),
         ],

@@ -165,16 +165,23 @@ class _QiblaMapViewState extends State<QiblaMapView> {
 
   Widget _mapInfo() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.94),
         borderRadius: BorderRadius.circular(15.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
-            width: 38.w,
-            height: 38.w,
+            width: 38.r,
+            height: 38.r,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: AppColors.iconBackground,
@@ -182,28 +189,31 @@ class _QiblaMapViewState extends State<QiblaMapView> {
             child: Icon(Icons.explore, color: AppColors.primary, size: 21.sp),
           ),
           SizedBox(width: 10.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Qibla Direction',
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  color: AppColors.textSecondary,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Qibla Direction',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-              ),
-              SizedBox(height: 2.h),
-              Text(
-                '${widget.qiblaDirection.round()}°',
-                style: TextStyle(
-                  fontSize: 17.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primary,
+                SizedBox(height: 2.h),
+                Text(
+                  '${widget.qiblaDirection.round()}°',
+                  style: TextStyle(
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          const Spacer(),
+          SizedBox(width: 8.w),
           Text(
             widget.distanceText,
             style: TextStyle(
@@ -239,15 +249,21 @@ class _QiblaMapViewState extends State<QiblaMapView> {
 
   Widget _smallCard({required String title, required String value}) {
     return Container(
-      height: 75.h,
-      padding: EdgeInsets.all(12.w),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             title,
@@ -260,8 +276,6 @@ class _QiblaMapViewState extends State<QiblaMapView> {
           SizedBox(height: 4.h),
           Text(
             value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.w600,

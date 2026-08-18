@@ -14,14 +14,14 @@ class QiblaToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 220.w,
-      height: 46.h,
-      padding: EdgeInsets.all(4.w),
+      constraints: BoxConstraints(maxWidth: 240.w),
+      padding: EdgeInsets.all(4.r),
       decoration: BoxDecoration(
         color: const Color(0xFFF2F4F3),
         borderRadius: BorderRadius.circular(28.r),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           _segment(
             'Compass',
@@ -48,6 +48,7 @@ class QiblaToggle extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
+          padding: EdgeInsets.symmetric(vertical: 8.h),
           decoration: BoxDecoration(
             color: selected ? Colors.white : Colors.transparent,
             borderRadius: BorderRadius.circular(24.r),

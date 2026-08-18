@@ -1,0 +1,108 @@
+// ignore_for_file: unused_element
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hijri/hijri_calendar.dart';
+import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/appconstants.dart';
+import 'package:islamic_app/widgets/appbar.dart';
+import 'package:islamic_app/widgets/islamiccalendr_widgets/calendar_grid.dart';
+import 'package:islamic_app/widgets/islamiccalendr_widgets/calendar_header.dart';
+import 'package:islamic_app/widgets/islamiccalendr_widgets/event_card.dart';
+import 'package:islamic_app/widgets/islamiccalendr_widgets/event_schedule_section.dart';
+import 'package:islamic_app/widgets/islamiccalendr_widgets/islamic_info_card.dart';
+
+class IslamicCalendarScreen extends StatefulWidget {
+  const IslamicCalendarScreen({super.key});
+
+  @override
+  State<IslamicCalendarScreen> createState() => _IslamicCalendarScreenState();
+}
+
+class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
+  DateTime _visibleMonth = DateTime.now();
+
+  DateTime _selectedDate = DateTime.now();
+
+  void _previousMonth() {
+    setState(() {
+      _visibleMonth = DateTime(_visibleMonth.year, _visibleMonth.month - 1, 1);
+    });
+  }
+
+  void _nextMonth() {
+    setState(() {
+      _visibleMonth = DateTime(_visibleMonth.year, _visibleMonth.month + 1, 1);
+    });
+  }
+
+  String _getCurrentHijri() {
+    final hijri = HijriCalendar.fromDate(_selectedDate);
+
+    return '${hijri.getLongMonthName()} '
+        '${hijri.hYear} AH';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.scaffoldBackground,
+      appBar: const Appbar(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20.h),
+              CalendarHeader(
+                hijriDate: _getCurrentHijri(),
+                location: 'Makkah, KSA',
+              ),
+              SizedBox(height: 20.h),
+              CalendarGrid(
+                visibleMonth: _visibleMonth,
+                selectedDate: _selectedDate,
+                onDateSelected: (date) {
+                  setState(() {
+                    _selectedDate = date;
+                  });
+                },
+                onPreviousMonth: _previousMonth,
+                onNextMonth: _nextMonth,
+              ),
+              SizedBox(height: 30.h),
+              UpcomingEventCard(
+                onReminderTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Reminder set for Eid-al-Fitr.'),
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height: 28.h),
+              const EventScheduleSection(),
+              SizedBox(height: 60.h),
+              const IslamicInfoCard(
+                image: Appconstants.mosqueImage,
+                title: 'Understanding Hijri',
+                description:
+                    'Discover the history and significance '
+                    'of the lunar calendar system.',
+              ),
+              SizedBox(height: 20.h),
+              const IslamicInfoCard(
+                image: Appconstants.quranImage,
+                title: 'Sacred Months',
+                description:
+                    'Learn about the four sacred months '
+                    'in Islam and their unique virtues.',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

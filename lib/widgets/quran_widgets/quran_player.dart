@@ -175,7 +175,6 @@ class _QuranPlayerState extends State<QuranPlayer>
 
           // Progress slider
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text(
                 _formatTime(_progress),
@@ -184,21 +183,23 @@ class _QuranPlayerState extends State<QuranPlayer>
                   color: Colors.white.withValues(alpha: 0.55),
                 ),
               ),
-              SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  trackHeight: 3.h,
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6.r),
-                  overlayShape: RoundSliderOverlayShape(overlayRadius: 14.r),
-                  activeTrackColor: AppColors.accent,
-                  inactiveTrackColor: Colors.white.withValues(alpha: 0.20),
-                  thumbColor: AppColors.accent,
-                  overlayColor: AppColors.accent.withValues(alpha: 0.20),
-                ),
-                child: Slider(
-                  value: _progress,
-                  min: 0,
-                  max: 1,
-                  onChanged: (v) => setState(() => _progress = v),
+              Expanded(
+                child: SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 3.h,
+                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6.r),
+                    overlayShape: RoundSliderOverlayShape(overlayRadius: 14.r),
+                    activeTrackColor: AppColors.accent,
+                    inactiveTrackColor: Colors.white.withValues(alpha: 0.20),
+                    thumbColor: AppColors.accent,
+                    overlayColor: AppColors.accent.withValues(alpha: 0.20),
+                  ),
+                  child: Slider(
+                    value: _progress,
+                    min: 0,
+                    max: 1,
+                    onChanged: (v) => setState(() => _progress = v),
+                  ),
                 ),
               ),
               Text(

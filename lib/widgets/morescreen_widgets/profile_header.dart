@@ -8,15 +8,15 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Stack(
           children: [
             CircleAvatar(
-              radius: 62.r,
+              radius: 54.r,
               backgroundColor: AppColors.primaryDark,
-              child: Icon(Icons.person, size: 65.sp, color: Colors.white),
+              child: Icon(Icons.person, size: 56.sp, color: Colors.white),
             ),
-
             Positioned(
               right: 0,
               bottom: 0,
@@ -28,7 +28,7 @@ class ProfileHeader extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 18.h),
+        SizedBox(height: 16.h),
         Text(
           "Ahmad Abdullah",
           style: TextStyle(

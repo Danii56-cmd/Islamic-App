@@ -12,18 +12,25 @@ class ReaderCustomizationCard extends StatelessWidget {
       backgroundColor: AppColors.cardBackground,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
-              Icon(Icons.format_size, color: AppColors.primaryDark),
+              Icon(Icons.format_size, color: AppColors.primaryDark, size: 22.sp),
               SizedBox(width: 8.w),
-              Text(
-                "Reader Customization",
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+              Expanded(
+                child: Text(
+                  "Reader Customization",
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
               ),
             ],
           ),
-          SizedBox(height: 25.h),
+          SizedBox(height: 20.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -33,6 +40,7 @@ class ReaderCustomizationCard extends StatelessWidget {
                   fontSize: 11.sp,
                   letterSpacing: 1,
                   color: AppColors.textMuted,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
@@ -41,6 +49,7 @@ class ReaderCustomizationCard extends StatelessWidget {
                   fontSize: 11.sp,
                   letterSpacing: 1,
                   color: AppColors.textMuted,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
@@ -49,6 +58,7 @@ class ReaderCustomizationCard extends StatelessWidget {
                   fontSize: 11.sp,
                   letterSpacing: 1,
                   color: AppColors.textMuted,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -66,21 +76,19 @@ class ReaderCustomizationCard extends StatelessWidget {
           // Internal Container
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 25.h),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(8.r),
               border: Border(
                 left: BorderSide(color: AppColors.accent, width: 3.w),
               ),
             ),
             child: Text(
-              '"The heart finds rest in\n'
-              'the remembrance of the\n'
-              'Divine."',
+              '"The heart finds rest in the remembrance of the Divine."',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 18.sp,
+                fontSize: 16.sp,
                 color: AppColors.textSecondary,
                 height: 1.5,
               ),
@@ -91,8 +99,9 @@ class ReaderCustomizationCard extends StatelessWidget {
             child: Text(
               "— SAMPLE TEXT PREVIEW",
               style: TextStyle(
-                fontSize: 8.sp,
+                fontSize: 9.sp,
                 fontWeight: FontWeight.bold,
+                letterSpacing: 1.0,
                 color: AppColors.textMuted,
               ),
             ),

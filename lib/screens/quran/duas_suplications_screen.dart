@@ -3,14 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 
-/// Duas & Supplications screen.
-///
-/// Can be shown two ways, same as QiblaFinderScreen:
-///  * Embedded inside the Quran tab (index 1) -- pass [onBack] and it
-///    renders a back button that just flips the parent's "showDuas" flag
-///    back off, keeping the bottom nav visible.
-///  * Pushed as a normal route -- omit [onBack] and Flutter's default
-///    AppBar back button takes over.
 class DuasScreen extends StatelessWidget {
   final VoidCallback? onBack;
 
@@ -34,7 +26,7 @@ class DuasScreen extends StatelessWidget {
                       onTap: onBack,
                       borderRadius: BorderRadius.circular(20.r),
                       child: Container(
-                        padding: EdgeInsets.all(10.w),
+                        padding: EdgeInsets.all(10.r),
                         decoration: const BoxDecoration(
                           color: Color(0xFFF2F4F3),
                           shape: BoxShape.circle,
@@ -47,12 +39,14 @@ class DuasScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 12.w),
-                    Text(
-                      "Duas & Supplications",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                    Expanded(
+                      child: Text(
+                        "Duas & Supplications",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                     ),
                   ],

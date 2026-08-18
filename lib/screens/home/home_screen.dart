@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/core/appconstants.dart';
+import 'package:islamic_app/screens/calendar/islamiccalendar_screen.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/header_text.dart';
 import 'package:islamic_app/widgets/upcoming_prayer.dart';
@@ -26,8 +27,9 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: AppColors.scaffoldBackground,
       appBar: const Appbar(),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -38,6 +40,7 @@ class HomeScreen extends StatelessWidget {
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w500,
                   color: AppColors.textMuted,
+                  letterSpacing: 0.8,
                 ),
               ),
               SizedBox(height: 10.h),
@@ -45,7 +48,6 @@ class HomeScreen extends StatelessWidget {
               SizedBox(height: 10.h),
               Container(
                 width: double.infinity,
-                height: 160.h,
                 decoration: BoxDecoration(
                   color: AppColors.cardBackground,
                   borderRadius: BorderRadius.circular(20.r),
@@ -58,11 +60,12 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 20.0,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 20.h,
                   ),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -75,14 +78,15 @@ class HomeScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 10.h),
                       Text(
-                        "The best among you are those who\nhave the best manners and character.",
+                        "The best among you are those who have the best manners and character.",
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
                           color: AppColors.textSecondary,
+                          height: 1.4,
                         ),
                       ),
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 16.h),
                       Text(
                         "— Sahih Bukhari",
                         style: TextStyle(
@@ -97,14 +101,14 @@ class HomeScreen extends StatelessWidget {
               ),
               SizedBox(height: 20.h),
               const UpcomingPrayer(),
-              SizedBox(height: 30.h),
+              SizedBox(height: 25.h),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                padding: EdgeInsets.symmetric(horizontal: 2.w),
                 child: GridView.count(
                   crossAxisCount: 2,
-                  mainAxisExtent: 100.h,
-                  crossAxisSpacing: 20.w,
-                  mainAxisSpacing: 15.h,
+                  childAspectRatio: 1.5,
+                  crossAxisSpacing: 16.w,
+                  mainAxisSpacing: 14.h,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
@@ -137,7 +141,14 @@ class HomeScreen extends StatelessWidget {
                     _featureCard(
                       icon: Icons.calendar_month_rounded,
                       title: "Islamic Calendar",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const IslamicCalendarScreen(),
+                          ),
+                        );
+                      },
                     ),
                     _featureCard(
                       icon: Icons.bubble_chart,
@@ -166,68 +177,69 @@ class JournalContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 210.h,
       width: double.infinity,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.r)),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(Appconstants.journalImage, fit: BoxFit.cover),
-          ),
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    AppColors.prayerCardActiveBg.withValues(alpha: 0.75),
-                  ],
-                  stops: const [0.25, 1],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 20.w,
-            right: 20.w,
-            bottom: 20.h,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "WEEKLY JOURNAL",
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.accent,
-                    letterSpacing: 1.sp,
-                  ),
-                ),
-                SizedBox(height: 5.h),
-                Text(
-                  "The Architecture of Silence",
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textOnPrimary,
-                  ),
-                ),
-                SizedBox(height: 5.h),
-                Text(
-                  "How physical spaces influence our\nspiritual connection and inner peace…",
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textOnPrimary.withValues(alpha: 0.7),
-                  ),
-                ),
-              ],
-            ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.r),
+        image: const DecorationImage(
+          image: AssetImage(Appconstants.mosqueImage),
+          fit: BoxFit.cover,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow,
+            blurRadius: 10.r,
+            offset: Offset(0, 4.h),
           ),
         ],
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 22.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.r),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.black.withValues(alpha: 0.15),
+              AppColors.prayerCardActiveBg.withValues(alpha: 0.85),
+            ],
+            stops: const [0.1, 1.0],
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "WEEKLY JOURNAL",
+              style: TextStyle(
+                fontSize: 10.sp,
+                fontWeight: FontWeight.bold,
+                color: AppColors.accent,
+                letterSpacing: 1.sp,
+              ),
+            ),
+            SizedBox(height: 6.h),
+            Text(
+              "The Architecture of Silence",
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textOnPrimary,
+              ),
+            ),
+            SizedBox(height: 6.h),
+            Text(
+              "How physical spaces influence our spiritual connection and inner peace…",
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textOnPrimary.withValues(alpha: 0.8),
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -243,7 +255,7 @@ Widget _featureCard({
     child: Container(
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
             color: AppColors.shadow,
@@ -253,22 +265,25 @@ Widget _featureCard({
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40.w,
-              height: 40.h,
+              width: 38.r,
+              height: 38.r,
               decoration: const BoxDecoration(
                 color: AppColors.iconBackground,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: AppColors.primary, size: 24.sp),
+              child: Icon(icon, color: AppColors.primary, size: 20.sp),
             ),
-            SizedBox(height: 10.w),
-            Expanded(
+            SizedBox(height: 6.h),
+            Flexible(
               child: Text(
                 title,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,

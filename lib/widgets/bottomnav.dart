@@ -10,30 +10,33 @@ class BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 72.h,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.r),
-          topRight: Radius.circular(20.r),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.r),
+            topRight: Radius.circular(20.r),
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _navItem(0, Icons.home_outlined, 'HOME'),
-          _navItem(1, Icons.menu_book_outlined, 'QURAN'),
-          _navItem(2, Icons.access_time_rounded, 'PRAYER'),
-          _navItem(3, Icons.more_horiz_rounded, 'MORE'),
-        ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 16,
+              offset: const Offset(0, -4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _navItem(0, Icons.home_outlined, 'HOME'),
+            _navItem(1, Icons.menu_book_outlined, 'QURAN'),
+            _navItem(2, Icons.access_time_rounded, 'PRAYER'),
+            _navItem(3, Icons.more_horiz_rounded, 'MORE'),
+          ],
+        ),
       ),
     );
   }
@@ -48,6 +51,7 @@ class BottomNav extends StatelessWidget {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
@@ -68,8 +72,8 @@ class BottomNav extends StatelessWidget {
           SizedBox(height: 3.h),
           // Small gold dot indicator underneath the active tab
           Container(
-            width: 4.w,
-            height: 4.w,
+            width: 4.r,
+            height: 4.r,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isSelected ? activeColor : Colors.transparent,

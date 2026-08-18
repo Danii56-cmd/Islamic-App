@@ -1,30 +1,61 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:islamic_app/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('App renders all tabs on small phone without overflow', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(320 * 2.0, 640 * 2.0);
+    tester.view.devicePixelRatio = 2.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(const MyApp());
+    await tester.pump(const Duration(milliseconds: 500));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.byType(MyApp), findsOneWidget);
+    expect(tester.takeException(), isNull);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Switch to Quran tab
+    await tester.tap(find.text('QURAN'));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.takeException(), isNull);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Switch to Prayer tab
+    await tester.tap(find.text('PRAYER'));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.takeException(), isNull);
+
+    // Switch to More tab
+    await tester.tap(find.text('MORE'));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('App renders all tabs on tablet without overflow', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(800 * 2.0, 1280 * 2.0);
+    tester.view.devicePixelRatio = 2.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const MyApp());
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.byType(MyApp), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    // Switch to Quran tab
+    await tester.tap(find.text('QURAN'));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.takeException(), isNull);
+
+    // Switch to Prayer tab
+    await tester.tap(find.text('PRAYER'));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.takeException(), isNull);
+
+    // Switch to More tab
+    await tester.tap(find.text('MORE'));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(tester.takeException(), isNull);
   });
 }

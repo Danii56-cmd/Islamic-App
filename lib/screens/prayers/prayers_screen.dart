@@ -30,7 +30,7 @@ class PrayersScreen extends StatelessWidget {
       backgroundColor: AppColors.scaffoldBackground,
       appBar: const Appbar(),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
@@ -38,7 +38,7 @@ class PrayersScreen extends StatelessWidget {
             children: [
               SizedBox(height: 20.h),
               const NextPrayerCard(),
-              SizedBox(height: 30.h),
+              SizedBox(height: 25.h),
               Text(
                 "Daily Prayers",
                 style: TextStyle(
@@ -47,34 +47,56 @@ class PrayersScreen extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
+              SizedBox(height: 6.h),
               Row(
                 children: [
-                  Icon(Icons.location_on_outlined, size: 14.sp),
-                  Text(
-                    "Islamabad, Pakistan",
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textSecondary,
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 14.sp,
+                          color: AppColors.textSecondary,
+                        ),
+                        SizedBox(width: 4.w),
+                        Flexible(
+                          child: Text(
+                            "Islamabad, Pakistan",
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textSecondary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const Spacer(),
-                  Text(
-                    "Calculation\nSettings",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
+                  SizedBox(width: 10.w),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Calculation\nSettings",
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                          height: 1.2,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Icon(Icons.tune, color: AppColors.primary, size: 20.sp),
+                    ],
                   ),
-                  SizedBox(width: 20.w),
-                  const Icon(Icons.tune, color: AppColors.primary),
                 ],
               ),
               SizedBox(height: 20.h),
               const PrayerList(),
-              SizedBox(height: 20.h),
+              SizedBox(height: 10.h),
               // Qibla Direction Card - toggles Qibla finder view within index 2
               _infoCard(
                 title: "Qibla Direction",
@@ -83,7 +105,7 @@ class PrayersScreen extends StatelessWidget {
                 color: const Color.fromARGB(77, 204, 229, 220),
                 onTap: onOpenQibla,
               ),
-              SizedBox(height: 15.h),
+              SizedBox(height: 14.h),
               // Method
               _infoCard(
                 title: "Method",
@@ -114,18 +136,24 @@ class PrayersScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 105.h,
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 18.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
         decoration: BoxDecoration(
           color: color ?? AppColors.cardBackground,
           borderRadius: BorderRadius.circular(20.r),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadow.withValues(alpha: 0.05),
+              blurRadius: 6.r,
+              offset: Offset(0, 2.h),
+            ),
+          ],
         ),
         child: Row(
           children: [
             Expanded(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -136,7 +164,7 @@ class PrayersScreen extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  SizedBox(height: 8.h),
+                  SizedBox(height: 6.h),
                   Text(
                     value,
                     style: TextStyle(
@@ -148,7 +176,8 @@ class PrayersScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(icon, size: 23.sp, color: AppColors.primary),
+            SizedBox(width: 10.w),
+            Icon(icon, size: 24.sp, color: AppColors.primary),
           ],
         ),
       ),
@@ -162,8 +191,8 @@ class NextPrayerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 150.h,
       width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 22.h),
       decoration: BoxDecoration(
         color: AppColors.primary,
         borderRadius: BorderRadius.circular(20.r),
@@ -176,7 +205,7 @@ class NextPrayerCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
@@ -188,6 +217,7 @@ class NextPrayerCard extends StatelessWidget {
               letterSpacing: 1.0,
             ),
           ),
+          SizedBox(height: 4.h),
           Text.rich(
             TextSpan(
               text: "01:30",
@@ -209,10 +239,9 @@ class NextPrayerCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 5.h),
+          SizedBox(height: 8.h),
           Container(
-            height: 30.h,
-            width: 120.w,
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
             decoration: BoxDecoration(
               color: AppColors.accentLight.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(20.r),
@@ -225,6 +254,7 @@ class NextPrayerCard extends StatelessWidget {
               ],
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
@@ -232,12 +262,12 @@ class NextPrayerCard extends StatelessWidget {
                   color: AppColors.accent,
                   size: 16.sp,
                 ),
-                SizedBox(width: 5.w),
+                SizedBox(width: 6.w),
                 Text(
                   "In 45 minutes",
                   style: TextStyle(
                     fontSize: 12.sp,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w500,
                     color: AppColors.accent,
                   ),
                 ),

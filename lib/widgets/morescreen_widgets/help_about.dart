@@ -12,22 +12,27 @@ class MoreOptionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
       decoration: BoxDecoration(
         color: AppColors.textMuted.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(14.r),
       ),
       child: Row(
         children: [
           Icon(icon, color: AppColors.primaryDark, size: 22.sp),
-          SizedBox(width: 15.w),
+          SizedBox(width: 14.w),
           Expanded(
             child: Text(
               title,
-              style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
-          Icon(Icons.chevron_right, color: AppColors.textMuted),
+          SizedBox(width: 8.w),
+          Icon(Icons.chevron_right, color: AppColors.textMuted, size: 20.sp),
         ],
       ),
     );

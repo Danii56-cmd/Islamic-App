@@ -21,6 +21,7 @@ class QiblaLocationRow extends StatelessWidget {
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           Icons.my_location_outlined,
@@ -28,12 +29,15 @@ class QiblaLocationRow extends StatelessWidget {
           color: const Color(0xFF8B9491),
         ),
         SizedBox(width: 7.w),
-        Text(
-          textToShow,
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-            color: const Color(0xFF737D7A),
+        Flexible(
+          child: Text(
+            textToShow,
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF737D7A),
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
