@@ -12,6 +12,8 @@ class AyahCard extends StatefulWidget {
     required this.translation,
     this.tag = AyahTag.none,
     this.isBookmarked = false,
+    this.onBookmarkTap,
+    this.onShareTap,
   });
 
   final int ayahNumber;
@@ -19,6 +21,8 @@ class AyahCard extends StatefulWidget {
   final String translation;
   final AyahTag tag;
   final bool isBookmarked;
+  final VoidCallback? onBookmarkTap;
+  final VoidCallback? onShareTap;
 
   @override
   State<AyahCard> createState() => _AyahCardState();
@@ -31,6 +35,14 @@ class _AyahCardState extends State<AyahCard> {
   void initState() {
     super.initState();
     _bookmarked = widget.isBookmarked;
+  }
+
+  @override
+  void didUpdateWidget(covariant AyahCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isBookmarked != widget.isBookmarked) {
+      _bookmarked = widget.isBookmarked;
+    }
   }
 
   Color get _tagColor {
@@ -82,7 +94,13 @@ class _AyahCardState extends State<AyahCard> {
                 _AyahNumberBadge(number: widget.ayahNumber),
                 SizedBox(width: 14.w),
                 GestureDetector(
-                  onTap: () => setState(() => _bookmarked = !_bookmarked),
+                  onTap: () {
+                    if (widget.onBookmarkTap != null) {
+                      widget.onBookmarkTap!();
+                    } else {
+                      setState(() => _bookmarked = !_bookmarked);
+                    }
+                  },
                   child: Icon(
                     _bookmarked ? Icons.bookmark : Icons.bookmark_outline,
                     size: 20.sp,
@@ -93,10 +111,13 @@ class _AyahCardState extends State<AyahCard> {
                 ),
                 SizedBox(width: 14.w),
                 // Share icon
-                Icon(
-                  Icons.share_outlined,
-                  size: 20.sp,
-                  color: AppColors.textMuted,
+                GestureDetector(
+                  onTap: widget.onShareTap,
+                  child: Icon(
+                    Icons.share_outlined,
+                    size: 20.sp,
+                    color: AppColors.textMuted,
+                  ),
                 ),
                 const Spacer(),
                 // Tag label

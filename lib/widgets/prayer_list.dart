@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/providers/prayer_provider.dart';
 
 class PrayerList extends StatefulWidget {
   const PrayerList({super.key});
@@ -10,116 +12,188 @@ class PrayerList extends StatefulWidget {
 }
 
 class _PrayerListState extends State<PrayerList> {
-  String activePrayer = "Dhuhr";
+  final Set<String> _notificationsEnabled = {
+    'Fajr',
+    'Dhuhr',
+    'Asr',
+    'Maghrib',
+    'Isha',
+  };
 
-  final prayers = [
-    {"name": "Fajr", "time": "04:52 AM", "icon": Icons.wb_twilight_rounded},
-    {"name": "Sunrise", "time": "06:24 AM", "icon": Icons.wb_sunny_outlined},
-    {"name": "Dhuhr", "time": "01:15 PM", "icon": Icons.wb_sunny_rounded},
-    {"name": "Asr", "time": "04:58 PM", "icon": Icons.wb_sunny_outlined},
-    {"name": "Maghrib", "time": "08:04 PM", "icon": Icons.wb_twilight_rounded},
-    {"name": "Isha", "time": "09:28 PM", "icon": Icons.nightlight_outlined},
-  ];
+  IconData _iconForPrayer(String name) {
+    switch (name.toLowerCase()) {
+      case 'fajr':
+        return Icons.wb_twilight_rounded;
+      case 'sunrise':
+        return Icons.wb_sunny_outlined;
+      case 'dhuhr':
+        return Icons.wb_sunny_rounded;
+      case 'asr':
+        return Icons.wb_sunny_outlined;
+      case 'maghrib':
+        return Icons.wb_twilight_rounded;
+      case 'isha':
+        return Icons.nightlight_outlined;
+      default:
+        return Icons.access_time_rounded;
+    }
+  }
+
+  String _format12(DateTime dt) {
+    final h24 = dt.hour;
+    final hour12 = h24 == 0 ? 12 : (h24 > 12 ? h24 - 12 : h24);
+    final m = dt.minute.toString().padLeft(2, '0');
+    final period = h24 >= 12 ? 'PM' : 'AM';
+    return '${hour12.toString().padLeft(2, '0')}:$m $period';
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(prayers.length, (index) {
-        final prayer = prayers[index];
+    return Consumer<PrayerProvider>(
+      builder: (context, provider, _) {
+        final timings = provider.timings;
+        final activePrayer = provider.activePrayerName;
 
-        final String name = prayer["name"] as String;
-        final String time = prayer["time"] as String;
-        final IconData icon = prayer["icon"] as IconData;
+        final List<Map<String, dynamic>> prayers = timings != null
+            ? timings.entries.map((e) {
+                return {
+                  "name": e.name,
+                  "time": _format12(e.time),
+                  "icon": _iconForPrayer(e.name),
+                };
+              }).toList()
+            : [
+                {"name": "Fajr", "time": "04:52 AM", "icon": Icons.wb_twilight_rounded},
+                {"name": "Sunrise", "time": "06:24 AM", "icon": Icons.wb_sunny_outlined},
+                {"name": "Dhuhr", "time": "01:15 PM", "icon": Icons.wb_sunny_rounded},
+                {"name": "Asr", "time": "04:58 PM", "icon": Icons.wb_sunny_outlined},
+                {"name": "Maghrib", "time": "08:04 PM", "icon": Icons.wb_twilight_rounded},
+                {"name": "Isha", "time": "09:28 PM", "icon": Icons.nightlight_outlined},
+              ];
 
-        final bool isActive = name == activePrayer;
+        return Column(
+          children: List.generate(prayers.length, (index) {
+            final prayer = prayers[index];
+            final String name = prayer["name"] as String;
+            final String time = prayer["time"] as String;
+            final IconData icon = prayer["icon"] as IconData;
 
-        return Padding(
-          padding: EdgeInsets.only(bottom: 12.h),
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                activePrayer = name;
-              });
-            },
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-              decoration: BoxDecoration(
-                color: isActive ? AppColors.primary : AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(18.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.shadow.withValues(alpha: 0.04),
-                    blurRadius: 6.r,
-                    offset: Offset(0, 2.h),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  // Prayer Icon
-                  Container(
-                    width: 44.r,
-                    height: 44.r,
-                    decoration: BoxDecoration(
-                      color: isActive
-                          ? AppColors.primaryLight
-                          : AppColors.scaffoldBackground,
-                      shape: BoxShape.circle,
+            final bool isActive =
+                name.toLowerCase() == (activePrayer.isEmpty ? "dhuhr" : activePrayer.toLowerCase());
+            final bool isNotifOn = _notificationsEnabled.contains(name);
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                decoration: BoxDecoration(
+                  color: isActive ? AppColors.primary : AppColors.cardBackground,
+                  borderRadius: BorderRadius.circular(18.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.shadow.withValues(alpha: 0.04),
+                      blurRadius: 6.r,
+                      offset: Offset(0, 2.h),
                     ),
-                    child: Center(
-                      child: Icon(
-                        icon,
-                        size: 22.sp,
-                        color: isActive ? AppColors.accent : AppColors.textMuted,
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    // Prayer Icon
+                    Container(
+                      width: 44.r,
+                      height: 44.r,
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? AppColors.primaryLight
+                            : AppColors.scaffoldBackground,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          icon,
+                          size: 22.sp,
+                          color: isActive ? AppColors.accent : AppColors.textMuted,
+                        ),
                       ),
                     ),
-                  ),
 
-                  SizedBox(width: 16.w),
+                    SizedBox(width: 16.w),
 
-                  // Prayer Name & Time
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          name,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                            color: isActive
-                                ? AppColors.textOnPrimary
-                                : AppColors.primary,
+                    // Prayer Name & Time
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w700,
+                              color: isActive
+                                  ? AppColors.textOnPrimary
+                                  : AppColors.primary,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 3.h),
-                        Text(
-                          time,
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: isActive
-                                ? AppColors.textOnPrimary
-                                : AppColors.textSecondary,
+                          SizedBox(height: 3.h),
+                          Text(
+                            time,
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: isActive
+                                  ? AppColors.textOnPrimary
+                                  : AppColors.textSecondary,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
 
-                  // Notification Icon
-                  Icon(
-                    Icons.notifications_active,
-                    size: 20.sp,
-                    color: isActive ? AppColors.accent : AppColors.primary,
-                  ),
-                ],
+                    // Notification Icon Toggle
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (isNotifOn) {
+                            _notificationsEnabled.remove(name);
+                          } else {
+                            _notificationsEnabled.add(name);
+                          }
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: const Duration(seconds: 1),
+                            content: Text(
+                              isNotifOn
+                                  ? 'Notifications muted for $name'
+                                  : 'Notification set for $name',
+                            ),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(4.r),
+                        child: Icon(
+                          isNotifOn
+                              ? Icons.notifications_active
+                              : Icons.notifications_off_outlined,
+                          size: 20.sp,
+                          color: isActive
+                              ? AppColors.accent
+                              : (isNotifOn
+                                  ? AppColors.primary
+                                  : AppColors.textMuted),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          }),
         );
-      }),
+      },
     );
   }
 }

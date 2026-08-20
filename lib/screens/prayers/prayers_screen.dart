@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/providers/location_provider.dart';
+import 'package:islamic_app/providers/prayer_provider.dart';
 import 'package:islamic_app/screens/qibla/qiblafinder_screen.dart';
+import 'package:islamic_app/services/prayer_service.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/prayer_list.dart';
 
@@ -19,6 +23,128 @@ class PrayersScreen extends StatelessWidget {
     required this.onOpenQibla,
     required this.onCloseQibla,
   });
+
+  void _showCalculationMethodSheet(BuildContext context) {
+    final prayerProvider = context.read<PrayerProvider>();
+    final locationProvider = context.read<LocationProvider>();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.scaffoldBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40.w,
+                    height: 4.h,
+                    decoration: BoxDecoration(
+                      color: AppColors.textMuted.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2.r),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  "Calculation Method",
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  "Select the authority used to calculate daily prayer times.",
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: CalculationMethod.values.length,
+                    separatorBuilder: (_, __) => SizedBox(height: 8.h),
+                    itemBuilder: (context, index) {
+                      final method = CalculationMethod.values[index];
+                      final isSelected = prayerProvider.method == method;
+
+                      return InkWell(
+                        onTap: () {
+                          Navigator.pop(ctx);
+                          final lat = locationProvider.location?.latitude ?? 33.6844;
+                          final lng = locationProvider.location?.longitude ?? 73.0479;
+                          prayerProvider.changeMethod(
+                            method,
+                            latitude: lat,
+                            longitude: lng,
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(14.r),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 12.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.accent.withValues(alpha: 0.15)
+                                : AppColors.cardBackground,
+                            borderRadius: BorderRadius.circular(14.r),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColors.accent
+                                  : Colors.transparent,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  method.label,
+                                  style: TextStyle(
+                                    fontSize: 13.sp,
+                                    fontWeight: isSelected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                    color: isSelected
+                                        ? AppColors.primary
+                                        : AppColors.textPrimary,
+                                  ),
+                                ),
+                              ),
+                              if (isSelected)
+                                Icon(
+                                  Icons.check_circle_rounded,
+                                  color: AppColors.accent,
+                                  size: 20.sp,
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,53 +177,70 @@ class PrayersScreen extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: 14.sp,
-                          color: AppColors.textSecondary,
-                        ),
-                        SizedBox(width: 4.w),
-                        Flexible(
-                          child: Text(
-                            "Islamabad, Pakistan",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.textSecondary,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                    child: Consumer<LocationProvider>(
+                      builder: (context, locProvider, _) {
+                        final locationText = locProvider.location?.label ??
+                            (locProvider.status == LocationStatus.loading
+                                ? "Locating..."
+                                : "Islamabad, Pakistan");
+
+                        return GestureDetector(
+                          onTap: () {
+                            locProvider.fetchLocation();
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: 14.sp,
+                                color: AppColors.textSecondary,
+                              ),
+                              SizedBox(width: 4.w),
+                              Flexible(
+                                child: Text(
+                                  locationText,
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   ),
                   SizedBox(width: 10.w),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Calculation\nSettings",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                          height: 1.2,
+                  GestureDetector(
+                    onTap: () => _showCalculationMethodSheet(context),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Calculation\nSettings",
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                            height: 1.2,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Icon(Icons.tune, color: AppColors.primary, size: 20.sp),
-                    ],
+                        SizedBox(width: 8.w),
+                        Icon(Icons.tune, color: AppColors.primary, size: 20.sp),
+                      ],
+                    ),
                   ),
                 ],
               ),
               SizedBox(height: 20.h),
               const PrayerList(),
               SizedBox(height: 10.h),
-              // Qibla Direction Card - toggles Qibla finder view within index 2
+              // Qibla Direction Card - toggles Qibla finder view
               _infoCard(
                 title: "Qibla Direction",
                 value: "142° SE",
@@ -106,15 +249,15 @@ class PrayersScreen extends StatelessWidget {
                 onTap: onOpenQibla,
               ),
               SizedBox(height: 14.h),
-              // Method
-              _infoCard(
-                title: "Method",
-                value: "Turkey (Diyanet)",
-                icon: Icons.info_outline_rounded,
-                color: AppColors.accent.withValues(alpha: 0.3),
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Method tapped")),
+              // Method Card
+              Consumer<PrayerProvider>(
+                builder: (context, prayerProvider, _) {
+                  return _infoCard(
+                    title: "Method",
+                    value: prayerProvider.method.label,
+                    icon: Icons.info_outline_rounded,
+                    color: AppColors.accent.withValues(alpha: 0.3),
+                    onTap: () => _showCalculationMethodSheet(context),
                   );
                 },
               ),
@@ -172,6 +315,8 @@ class PrayersScreen extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       color: AppColors.textSecondary,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -190,92 +335,113 @@ class NextPrayerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 22.h),
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(20.r),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 5.r,
-            offset: Offset(0, 2.h),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            "NEXT PRAYER: DHUHR",
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textMuted,
-              letterSpacing: 1.0,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          Text.rich(
-            TextSpan(
-              text: "01:30",
-              style: TextStyle(
-                fontSize: 46.sp,
-                fontWeight: FontWeight.w800,
-                color: AppColors.textOnPrimary,
+    return Consumer<PrayerProvider>(
+      builder: (context, provider, _) {
+        final nextPrayer = provider.nextPrayer;
+        final nextName = nextPrayer != null ? nextPrayer.name.toUpperCase() : "DHUHR";
+
+        String timeStr = "01:30";
+        String period = "PM";
+
+        if (nextPrayer != null) {
+          final dt = nextPrayer.time;
+          final h24 = dt.hour;
+          final h12 = h24 == 0 ? 12 : (h24 > 12 ? h24 - 12 : h24);
+          final m = dt.minute.toString().padLeft(2, '0');
+          timeStr = '${h12.toString().padLeft(2, '0')}:$m';
+          period = h24 >= 12 ? 'PM' : 'AM';
+        }
+
+        final countdownText = provider.formattedCountdown();
+
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 22.h),
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(20.r),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow,
+                blurRadius: 5.r,
+                offset: Offset(0, 2.h),
               ),
-              children: [
-                WidgetSpan(child: SizedBox(width: 5.w)),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "NEXT PRAYER: $nextName",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textMuted,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              SizedBox(height: 4.h),
+              Text.rich(
                 TextSpan(
-                  text: "PM",
+                  text: timeStr,
                   style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 46.sp,
+                    fontWeight: FontWeight.w800,
                     color: AppColors.textOnPrimary,
                   ),
+                  children: [
+                    WidgetSpan(child: SizedBox(width: 5.w)),
+                    TextSpan(
+                      text: period,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textOnPrimary,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 8.h),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: AppColors.accentLight.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(20.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.shadow,
+                      blurRadius: 5.r,
+                      offset: Offset(0, 2.h),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.access_time_rounded,
+                      color: AppColors.accent,
+                      size: 16.sp,
+                    ),
+                    SizedBox(width: 6.w),
+                    Text(
+                      "In $countdownText",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 8.h),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
-            decoration: BoxDecoration(
-              color: AppColors.accentLight.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(20.r),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadow,
-                  blurRadius: 5.r,
-                  offset: Offset(0, 2.h),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.access_time_rounded,
-                  color: AppColors.accent,
-                  size: 16.sp,
-                ),
-                SizedBox(width: 6.w),
-                Text(
-                  "In 45 minutes",
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.accent,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

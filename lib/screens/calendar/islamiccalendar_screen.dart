@@ -6,12 +6,14 @@ import 'package:hijri/hijri_calendar.dart';
 
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/core/appconstants.dart';
+import 'package:islamic_app/providers/location_provider.dart';
 
 import 'package:islamic_app/widgets/islamiccalendr_widgets/calendar_grid.dart';
 import 'package:islamic_app/widgets/islamiccalendr_widgets/calendar_header.dart';
 import 'package:islamic_app/widgets/islamiccalendr_widgets/event_card.dart';
 import 'package:islamic_app/widgets/islamiccalendr_widgets/event_schedule_section.dart';
 import 'package:islamic_app/widgets/islamiccalendr_widgets/islamic_info_card.dart';
+import 'package:provider/provider.dart';
 
 class IslamicCalendarScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -67,13 +69,13 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                       child: Container(
                         padding: EdgeInsets.all(10.w),
                         decoration: const BoxDecoration(
-                          color: Color(0xFFF2F4F3),
+                          color: AppColors.textOnPrimary,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.arrow_back_ios_new_rounded,
                           size: 16.sp,
-                          color: const Color(0xFF003831),
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ),
@@ -97,9 +99,14 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                 ],
               ),
               SizedBox(height: 20.h),
-              CalendarHeader(
-                hijriDate: _getCurrentHijri(),
-                location: 'Makkah, KSA',
+              Consumer<LocationProvider>(
+                builder: (context, locProvider, _) {
+                  final loc = locProvider.location?.label ?? 'Makkah, KSA';
+                  return CalendarHeader(
+                    hijriDate: _getCurrentHijri(),
+                    location: loc,
+                  );
+                },
               ),
               SizedBox(height: 20.h),
               CalendarGrid(

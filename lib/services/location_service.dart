@@ -24,9 +24,6 @@ class LocationServiceException implements Exception {
   String toString() => message;
 }
 
-/// Wraps `geolocator` (GPS fix) + `geocoding` (reverse lookup to a
-/// human-readable city/country) behind one call so providers don't
-/// have to juggle permissions logic themselves.
 class LocationService {
   Future<ResolvedLocation> getCurrentLocation() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
@@ -57,8 +54,7 @@ class LocationService {
     String city = '';
     String country = '';
     try {
-      final geocoding = Geocoding();
-      final placemarks = await geocoding.placemarkFromCoordinates(
+      final placemarks = await Geocoding().placemarkFromCoordinates(
         position.latitude,
         position.longitude,
       );

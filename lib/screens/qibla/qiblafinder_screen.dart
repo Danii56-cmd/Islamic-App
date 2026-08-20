@@ -12,6 +12,8 @@ import 'package:islamic_app/widgets/qibla_widgets/qibla_location_row.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_map_view.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_toggle.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
+import 'package:islamic_app/providers/location_provider.dart';
 
 class QiblaFinderScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -297,9 +299,10 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
             SizedBox(height: 16.h),
             QiblaLocationRow(
               currentPosition: currentPosition,
-              locationName: currentPosition == null
-                  ? 'London, United Kingdom'
-                  : null,
+              locationName: context.watch<LocationProvider>().location?.label ??
+                  (currentPosition == null
+                      ? 'London, United Kingdom'
+                      : null),
             ),
             SizedBox(height: 12.h),
           ],
