@@ -65,10 +65,7 @@ class LocationService {
             : (p.subAdministrativeArea ?? '');
         country = p.country ?? '';
       }
-    } catch (_) {
-      // Reverse geocoding is best-effort — GPS coordinates alone are
-      // still enough to fetch prayer timings, so we don't rethrow.
-    }
+    } catch (_) {}
 
     return ResolvedLocation(
       latitude: position.latitude,

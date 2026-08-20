@@ -10,7 +10,10 @@ import 'package:islamic_app/widgets/morescreen_widgets/read_custom.dart';
 import 'package:islamic_app/widgets/morescreen_widgets/theme_card.dart';
 
 class MoreScreen extends StatelessWidget {
-  const MoreScreen({super.key});
+  const MoreScreen({
+    super.key,
+    required GlobalKey<NavigatorState> navigatorKey,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +37,42 @@ class MoreScreen extends StatelessWidget {
             SizedBox(height: 20.h),
             const ReaderCustomizationCard(),
             SizedBox(height: 20.h),
-            const MoreOptionTile(icon: Icons.help_outline, title: "Help & Support"),
+            MoreOptionTile(
+              icon: Icons.help_outline,
+              title: "Help & Support",
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      "This feature will be available in the next update.",
+                    ),
+                  ),
+                );
+              },
+            ),
             SizedBox(height: 12.h),
-            const MoreOptionTile(
+            MoreOptionTile(
               icon: Icons.info_outline,
               title: "About The Sacred Editorial",
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      "This feature will be available in the next update.",
+                    ),
+                  ),
+                );
+              },
             ),
             SizedBox(height: 24.h),
             TextButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Sign Out functionality not implemented."),
+                  ),
+                );
+              },
               icon: Icon(Icons.logout, color: Colors.red, size: 20.sp),
               label: Text(
                 "Sign Out",

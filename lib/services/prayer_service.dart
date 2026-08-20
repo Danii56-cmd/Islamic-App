@@ -9,8 +9,7 @@ class PrayerServiceException implements Exception {
   String toString() => message;
 }
 
-/// Calculation methods supported by Al Adhan's `method` query param.
-/// (Full list: https://aladhan.com/calculation-methods)
+
 enum CalculationMethod {
   karachi(1, 'University of Islamic Sciences, Karachi'),
   isna(2, 'Islamic Society of North America (ISNA)'),
@@ -24,9 +23,6 @@ enum CalculationMethod {
   final String label;
   const CalculationMethod(this.id, this.label);
 }
-
-/// Talks to the free, keyless Al Adhan API
-/// (https://aladhan.com/prayer-times-api) for daily prayer timings.
 class PrayerService {
   static const _baseUrl = 'https://api.aladhan.com/v1';
 

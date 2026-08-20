@@ -5,6 +5,7 @@ import 'package:flutter_compass_v2/flutter_compass_v2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:islamic_app/widgets/appbar.dart';
+import 'package:islamic_app/widgets/custom_pop_scope.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_compass.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_info_cards.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_location_error.dart';
@@ -146,68 +147,78 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFA),
-      appBar: const Appbar(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 6.h),
-            // Back button + toggle row
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Row(
-                children: [
-                  if (widget.onBack != null) ...[
-                    InkWell(
-                      onTap: widget.onBack,
-                      borderRadius: BorderRadius.circular(20.r),
-                      child: Container(
-                        padding: EdgeInsets.all(10.w),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFF2F4F3),
-                          shape: BoxShape.circle,
+    return CustomPopScope(
+      isRoot: false,
+      onBackPressed: () {
+        if (widget.onBack != null) {
+          widget.onBack!();
+          return true;
+        }
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF9FAFA),
+        appBar: const Appbar(),
+        body: SafeArea(
+          child: Column(
+            children: [
+              SizedBox(height: 6.h),
+              // Back button + toggle row
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Row(
+                  children: [
+                    if (widget.onBack != null) ...[
+                      InkWell(
+                        onTap: widget.onBack,
+                        borderRadius: BorderRadius.circular(20.r),
+                        child: Container(
+                          padding: EdgeInsets.all(10.w),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFF2F4F3),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 16.sp,
+                            color: const Color(0xFF003831),
+                          ),
                         ),
-                        child: Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          size: 16.sp,
-                          color: const Color(0xFF003831),
+                      ),
+                    ],
+                    Expanded(
+                      child: Center(
+                        child: QiblaToggle(
+                          isMapSelected: isMapSelected,
+                          onChanged: (v) => setState(() => isMapSelected = v),
                         ),
                       ),
                     ),
+                    if (widget.onBack != null) SizedBox(width: 36.w),
                   ],
-                  Expanded(
-                    child: Center(
-                      child: QiblaToggle(
-                        isMapSelected: isMapSelected,
-                        onChanged: (v) => setState(() => isMapSelected = v),
-                      ),
-                    ),
-                  ),
-                  if (widget.onBack != null) SizedBox(width: 36.w),
-                ],
+                ),
               ),
-            ),
-            SizedBox(height: 8.h),
-            Expanded(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250),
-                child: isMapSelected
-                    ? QiblaMapView(
-                        key: const ValueKey('map'),
-                        userLocation: _userLatLng,
-                        kaabaLocation: _kaabaLatLng,
-                        currentPosition: currentPosition,
-                        qiblaDirection: qiblaBearing,
-                        distanceText: _distanceText,
-                      )
-                    : Container(
-                        key: const ValueKey('compass'),
-                        child: _compassBody(),
-                      ),
+              SizedBox(height: 8.h),
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  child: isMapSelected
+                      ? QiblaMapView(
+                          key: const ValueKey('map'),
+                          userLocation: _userLatLng,
+                          kaabaLocation: _kaabaLatLng,
+                          currentPosition: currentPosition,
+                          qiblaDirection: qiblaBearing,
+                          distanceText: _distanceText,
+                        )
+                      : Container(
+                          key: const ValueKey('compass'),
+                          child: _compassBody(),
+                        ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -299,10 +310,9 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
             SizedBox(height: 16.h),
             QiblaLocationRow(
               currentPosition: currentPosition,
-              locationName: context.watch<LocationProvider>().location?.label ??
-                  (currentPosition == null
-                      ? 'London, United Kingdom'
-                      : null),
+              locationName:
+                  context.watch<LocationProvider>().location?.label ??
+                  (currentPosition == null ? 'London, United Kingdom' : null),
             ),
             SizedBox(height: 12.h),
           ],

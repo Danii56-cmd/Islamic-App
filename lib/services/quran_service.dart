@@ -9,9 +9,6 @@ class QuranServiceException implements Exception {
   String toString() => message;
 }
 
-/// Talks to the free, keyless AlQuran Cloud API
-/// (https://alquran.cloud/api) for the surah index, ayah text
-/// (Uthmani script) and an English translation (Saheeh International).
 class QuranService {
   static const _baseUrl = 'https://api.alquran.cloud/v1';
 
@@ -25,9 +22,6 @@ class QuranService {
         .toList();
   }
 
-  /// Fetches a single surah's ayahs, paired Arabic + English
-  /// translation, via the dual "editions" endpoint so both come back
-  /// in one request.
   Future<List<AyahModel>> fetchSurahAyahs(int surahNumber) async {
     final uri = Uri.parse(
       '$_baseUrl/surah/$surahNumber/editions/quran-uthmani,en.sahih',

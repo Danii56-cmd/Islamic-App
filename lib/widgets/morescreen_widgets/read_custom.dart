@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:islamic_app/providers/fontsize_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/widgets/morescreen_widgets/reusable_card.dart';
 
@@ -8,6 +10,9 @@ class ReaderCustomizationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontProvider = context.watch<FontSizeProvider>();
+    final currentSize = fontProvider.fontSize;
+
     return MyCard(
       backgroundColor: AppColors.cardBackground,
       child: Column(
@@ -16,7 +21,11 @@ class ReaderCustomizationCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.format_size, color: AppColors.primaryDark, size: 22.sp),
+              Icon(
+                Icons.format_size,
+                color: AppColors.primaryDark,
+                size: 22.sp,
+              ),
               SizedBox(width: 8.w),
               Expanded(
                 child: Text(
@@ -33,47 +42,32 @@ class ReaderCustomizationCard extends StatelessWidget {
           SizedBox(height: 20.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "SMALL",
+            children: ReaderFontSize.values.map((size) {
+              final isActive = size == currentSize;
+              return Text(
+                size.label,
                 style: TextStyle(
                   fontSize: 11.sp,
                   letterSpacing: 1,
-                  color: AppColors.textMuted,
-                  fontWeight: FontWeight.w600,
+                  color: isActive ? AppColors.primary : AppColors.textMuted,
+                  fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
                 ),
-              ),
-              Text(
-                "NORMAL",
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  letterSpacing: 1,
-                  color: AppColors.textMuted,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                "LARGE",
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  letterSpacing: 1,
-                  color: AppColors.textMuted,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+              );
+            }).toList(),
           ),
 
           Slider(
-            value: 1,
+            value: currentSize.sliderValue,
             min: 0,
             max: 2,
             divisions: 2,
             activeColor: AppColors.primary,
             inactiveColor: AppColors.textMuted.withValues(alpha: 0.2),
-            onChanged: (value) {},
+            onChanged: (value) {
+              context.read<FontSizeProvider>().setFontSize(value);
+            },
           ),
-          // Internal Container
+          // Internal Container — live preview
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
@@ -84,13 +78,16 @@ class ReaderCustomizationCard extends StatelessWidget {
                 left: BorderSide(color: AppColors.accent, width: 3.w),
               ),
             ),
-            child: Text(
-              '"The heart finds rest in the remembrance of the Divine."',
-              textAlign: TextAlign.center,
+            child: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
               style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 16.sp * fontProvider.scale,
                 color: AppColors.textSecondary,
                 height: 1.5,
+              ),
+              child: const Text(
+                '"The heart finds rest in the remembrance of the Divine."',
+                textAlign: TextAlign.center,
               ),
             ),
           ),

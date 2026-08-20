@@ -137,7 +137,13 @@ class HomeScreen extends StatelessWidget {
                           _featureCard(
                             icon: Icons.history_edu,
                             title: "Hadith",
-                            onTap: () {},
+                            onTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Hadith feature coming soon!"),
+                                ),
+                              );
+                            },
                           ),
                           _featureCard(
                             icon: Icons.volunteer_activism_outlined,

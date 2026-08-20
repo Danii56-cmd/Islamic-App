@@ -10,9 +10,6 @@ import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/prayer_list.dart';
 
 class PrayersScreen extends StatelessWidget {
-  /// Whether the Qibla compass sub-view should be showing right now
-  /// (controlled by MainScreen, so Home's Qibla container can trigger it
-  /// too, not just the "Qibla Direction" card below).
   final bool showQibla;
   final VoidCallback onOpenQibla;
   final VoidCallback onCloseQibla;
@@ -83,8 +80,10 @@ class PrayersScreen extends StatelessWidget {
                       return InkWell(
                         onTap: () {
                           Navigator.pop(ctx);
-                          final lat = locationProvider.location?.latitude ?? 33.6844;
-                          final lng = locationProvider.location?.longitude ?? 73.0479;
+                          final lat =
+                              locationProvider.location?.latitude ?? 33.6844;
+                          final lng =
+                              locationProvider.location?.longitude ?? 73.0479;
                           prayerProvider.changeMethod(
                             method,
                             latitude: lat,
@@ -179,7 +178,8 @@ class PrayersScreen extends StatelessWidget {
                   Expanded(
                     child: Consumer<LocationProvider>(
                       builder: (context, locProvider, _) {
-                        final locationText = locProvider.location?.label ??
+                        final locationText =
+                            locProvider.location?.label ??
                             (locProvider.status == LocationStatus.loading
                                 ? "Locating..."
                                 : "Islamabad, Pakistan");
@@ -338,7 +338,9 @@ class NextPrayerCard extends StatelessWidget {
     return Consumer<PrayerProvider>(
       builder: (context, provider, _) {
         final nextPrayer = provider.nextPrayer;
-        final nextName = nextPrayer != null ? nextPrayer.name.toUpperCase() : "DHUHR";
+        final nextName = nextPrayer != null
+            ? nextPrayer.name.toUpperCase()
+            : "DHUHR";
 
         String timeStr = "01:30";
         String period = "PM";
