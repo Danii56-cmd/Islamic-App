@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/providers/fontsize_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/widgets/morescreen_widgets/reusable_card.dart';
 
 class ReaderCustomizationCard extends StatelessWidget {
@@ -14,18 +14,14 @@ class ReaderCustomizationCard extends StatelessWidget {
     final currentSize = fontProvider.fontSize;
 
     return MyCard(
-      backgroundColor: AppColors.cardBackground,
+      backgroundColor: context.textMuted.withValues(alpha: 0.1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.format_size,
-                color: AppColors.primaryDark,
-                size: 22.sp,
-              ),
+              Icon(Icons.format_size, color: context.primaryDark, size: 22.sp),
               SizedBox(width: 8.w),
               Expanded(
                 child: Text(
@@ -33,7 +29,7 @@ class ReaderCustomizationCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: context.textPrimary,
                   ),
                 ),
               ),
@@ -49,7 +45,7 @@ class ReaderCustomizationCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11.sp,
                   letterSpacing: 1,
-                  color: isActive ? AppColors.primary : AppColors.textMuted,
+                  color: isActive ? context.primary : context.textMuted,
                   fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
                 ),
               );
@@ -61,8 +57,8 @@ class ReaderCustomizationCard extends StatelessWidget {
             min: 0,
             max: 2,
             divisions: 2,
-            activeColor: AppColors.primary,
-            inactiveColor: AppColors.textMuted.withValues(alpha: 0.2),
+            activeColor: context.primary,
+            inactiveColor: context.textMuted.withValues(alpha: 0.2),
             onChanged: (value) {
               context.read<FontSizeProvider>().setFontSize(value);
             },
@@ -72,17 +68,17 @@ class ReaderCustomizationCard extends StatelessWidget {
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: context.textMuted.withValues(alpha: 0.09),
               borderRadius: BorderRadius.circular(8.r),
               border: Border(
-                left: BorderSide(color: AppColors.accent, width: 3.w),
+                left: BorderSide(color: context.accent, width: 3.w),
               ),
             ),
             child: AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),
               style: TextStyle(
                 fontSize: 16.sp * fontProvider.scale,
-                color: AppColors.textSecondary,
+                color: context.textSecondary,
                 height: 1.5,
               ),
               child: const Text(
@@ -99,7 +95,7 @@ class ReaderCustomizationCard extends StatelessWidget {
                 fontSize: 9.sp,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.0,
-                color: AppColors.textMuted,
+                color: context.textMuted,
               ),
             ),
           ),

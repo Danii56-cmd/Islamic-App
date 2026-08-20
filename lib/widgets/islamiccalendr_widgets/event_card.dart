@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 
 class UpcomingEventCard extends StatelessWidget {
   final VoidCallback onReminderTap;
@@ -25,7 +26,7 @@ class UpcomingEventCard extends StatelessWidget {
               width: 120.w,
               height: 120.w,
               decoration: BoxDecoration(
-                color: AppColors.primaryLight.withValues(alpha: 0.25),
+                color: context.primaryLight.withValues(alpha: 0.25),
                 shape: BoxShape.circle,
               ),
             ),
@@ -37,7 +38,7 @@ class UpcomingEventCard extends StatelessWidget {
               Text(
                 'Upcoming Event',
                 style: TextStyle(
-                  color: AppColors.textOnPrimary,
+                  color: context.textOnPrimary,
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w700,
                 ),
@@ -47,7 +48,7 @@ class UpcomingEventCard extends StatelessWidget {
                 'Eid-al-Fitr is approaching in 1 day. '
                 'Time for Zakat-al-Fitr.',
                 style: TextStyle(
-                  color: AppColors.prayerCardText,
+                  color: context.prayerCardText,
                   fontSize: 13.sp,
                   height: 1.45,
                 ),
@@ -56,8 +57,8 @@ class UpcomingEventCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: onReminderTap,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accent,
-                  foregroundColor: AppColors.textPrimary,
+                  backgroundColor: context.accent,
+                  foregroundColor: context.textPrimary,
                   elevation: 0,
                   padding: EdgeInsets.symmetric(
                     horizontal: 16.w,

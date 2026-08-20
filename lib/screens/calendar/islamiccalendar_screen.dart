@@ -3,12 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hijri/hijri_calendar.dart';
-
-import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/core/appconstants.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/providers/location_provider.dart';
 import 'package:islamic_app/widgets/custom_pop_scope.dart';
-
 import 'package:islamic_app/widgets/islamiccalendr_widgets/calendar_grid.dart';
 import 'package:islamic_app/widgets/islamiccalendr_widgets/calendar_header.dart';
 import 'package:islamic_app/widgets/islamiccalendr_widgets/event_card.dart';
@@ -59,7 +57,7 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
         return false; // Allow default back behavior
       },
       child: Scaffold(
-        backgroundColor: AppColors.scaffoldBackground,
+        backgroundColor: context.background,
         body: SafeArea(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
@@ -78,14 +76,14 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                         borderRadius: BorderRadius.circular(20.r),
                         child: Container(
                           padding: EdgeInsets.all(10.w),
-                          decoration: const BoxDecoration(
-                            color: AppColors.textOnPrimary,
+                          decoration: BoxDecoration(
+                            color: context.textPrimary,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.arrow_back_ios_new_rounded,
                             size: 16.sp,
-                            color: AppColors.textPrimary,
+                            color: context.textPrimary,
                           ),
                         ),
                       ),
@@ -98,7 +96,7 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                           style: TextStyle(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
+                            color: context.textPrimary,
                           ),
                         ),
                       ),

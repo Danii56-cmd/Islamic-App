@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 
 class QiblaInfoCards extends StatelessWidget {
   final String distanceText;
@@ -75,7 +76,7 @@ class QiblaInfoCard extends StatelessWidget {
               fontSize: 10.sp,
               letterSpacing: 1.1,
               fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
             ),
           ),
           SizedBox(height: 6.h),

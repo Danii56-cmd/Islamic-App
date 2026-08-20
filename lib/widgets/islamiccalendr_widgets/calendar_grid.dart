@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'calendar_day.dart';
 
 class CalendarGrid extends StatelessWidget {
@@ -86,7 +87,7 @@ class CalendarGrid extends StatelessWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(18.w, 20.h, 18.w, 18.h),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: context.cardBackground,
         borderRadius: BorderRadius.circular(17.r),
         boxShadow: [
           BoxShadow(
@@ -108,7 +109,7 @@ class CalendarGrid extends StatelessWidget {
                   Text(
                     '${_monthName(visibleMonth.month)} ${visibleMonth.year}',
                     style: TextStyle(
-                      color: AppColors.textPrimary,
+                      color: context.textPrimary,
                       fontSize: 21.sp,
                       fontWeight: FontWeight.w700,
                     ),
@@ -117,7 +118,7 @@ class CalendarGrid extends StatelessWidget {
                   Text(
                     '${hijriMonth.getLongMonthName()} ${hijriMonth.hYear}',
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                       fontSize: 12.sp,
                     ),
                   ),
@@ -176,6 +177,10 @@ class CalendarGrid extends StatelessWidget {
   }
 }
 
+extension on BuildContext {
+  Color? get cardBackground => null;
+}
+
 class _WeekDay extends StatelessWidget {
   final String text;
 
@@ -188,7 +193,7 @@ class _WeekDay extends StatelessWidget {
         child: Text(
           text,
           style: TextStyle(
-            color: AppColors.textSecondary,
+            color: context.textSecondary,
             fontSize: 9.sp,
             fontWeight: FontWeight.w800,
           ),
@@ -211,11 +216,11 @@ class _NavigationButton extends StatelessWidget {
       child: Container(
         width: 29.w,
         height: 29.w,
-        decoration: const BoxDecoration(
-          color: AppColors.iconBackground,
+        decoration: BoxDecoration(
+          color: context.iconBackground,
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, size: 19.sp, color: AppColors.textPrimary),
+        child: Icon(icon, size: 19.sp, color: context.textPrimary),
       ),
     );
   }

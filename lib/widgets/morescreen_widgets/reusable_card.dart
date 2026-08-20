@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 
 class MyCard extends StatelessWidget {
   final Widget child;
@@ -14,11 +14,11 @@ class MyCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.cardBackground,
+        color: backgroundColor ?? context.cardBackground,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow.withValues(alpha: 0.04),
+            color: context.shadow.withValues(alpha: 0.04),
             blurRadius: 6.r,
             offset: Offset(0, 2.h),
           ),
@@ -27,4 +27,8 @@ class MyCard extends StatelessWidget {
       child: child,
     );
   }
+}
+
+extension on BuildContext {
+  Color? get cardBackground => null;
 }

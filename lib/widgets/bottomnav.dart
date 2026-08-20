@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 
 class BottomNav extends StatelessWidget {
   final int currentIndex;
@@ -15,7 +15,7 @@ class BottomNav extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 8.h),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.textMuted.withValues(alpha: 0.1),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20.r),
             topRight: Radius.circular(20.r),
@@ -31,20 +31,25 @@ class BottomNav extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _navItem(0, Icons.home_outlined, 'HOME'),
-            _navItem(1, Icons.menu_book_outlined, 'QURAN'),
-            _navItem(2, Icons.access_time_rounded, 'PRAYER'),
-            _navItem(3, Icons.more_horiz_rounded, 'MORE'),
+            _navItem(0, Icons.home_outlined, 'HOME', context),
+            _navItem(1, Icons.menu_book_outlined, 'QURAN', context),
+            _navItem(2, Icons.access_time_rounded, 'PRAYER', context),
+            _navItem(3, Icons.more_horiz_rounded, 'MORE', context),
           ],
         ),
       ),
     );
   }
 
-  Widget _navItem(int index, IconData icon, String label) {
+  Widget _navItem(
+    int index,
+    IconData icon,
+    String label,
+    BuildContext context,
+  ) {
     final isSelected = index == currentIndex;
-    const activeColor = AppColors.accent;
-    const inactiveColor = AppColors.textMuted;
+    final activeColor = context.accent;
+    final inactiveColor = context.textMuted;
 
     return InkWell(
       onTap: () => onTap(index),

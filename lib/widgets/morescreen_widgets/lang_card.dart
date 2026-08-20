@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/widgets/morescreen_widgets/reusable_card.dart';
 
 class LanguageCard extends StatelessWidget {
@@ -9,19 +9,19 @@ class LanguageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyCard(
-      backgroundColor: AppColors.textMuted.withValues(alpha: 0.1),
+      backgroundColor: context.textMuted.withValues(alpha: 0.1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
-              Icon(Icons.language, color: AppColors.primary, size: 28.sp),
+              Icon(Icons.language, color: context.primary, size: 28.sp),
               const Spacer(),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 5.h),
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: context.primary,
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(
@@ -41,13 +41,13 @@ class LanguageCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: context.textPrimary,
             ),
           ),
           SizedBox(height: 3.h),
           Text(
             "Selected: English (US)",
-            style: TextStyle(fontSize: 12.sp, color: AppColors.textMuted),
+            style: TextStyle(fontSize: 12.sp, color: context.textMuted),
           ),
         ],
       ),

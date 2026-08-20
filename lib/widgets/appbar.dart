@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/core/appconstants.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/screens/notifications/notification_screen.dart';
 
 class Appbar extends StatelessWidget implements PreferredSizeWidget {
@@ -10,7 +11,7 @@ class Appbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: context.background,
       elevation: 0,
       scrolledUnderElevation: 0,
       titleSpacing: 20.w,
@@ -18,7 +19,7 @@ class Appbar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           CircleAvatar(
             radius: 18.r,
-            backgroundColor: AppColors.iconBackground,
+            backgroundColor: context.iconBackground,
             backgroundImage: const AssetImage(Appconstants.profile),
           ),
           SizedBox(width: 10.w),
@@ -39,7 +40,7 @@ class Appbar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: Icon(
             Icons.settings_outlined,
-            color: AppColors.textPrimary,
+            color: context.textPrimary,
             size: 24.sp,
           ),
           onPressed: () {},
@@ -47,13 +48,15 @@ class Appbar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: Icon(
             Icons.notifications_none_rounded,
-            color: AppColors.textPrimary,
+            color: context.textPrimary,
             size: 24.sp,
           ),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: ((context) => const NotificationScreen())),
+              MaterialPageRoute(
+                builder: ((context) => const NotificationScreen()),
+              ),
             );
           },
         ),

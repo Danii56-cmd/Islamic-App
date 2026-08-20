@@ -5,24 +5,26 @@ import 'package:islamic_app/widgets/header_text.dart';
 import 'package:provider/provider.dart';
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/core/appconstants.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/models/dua_model.dart';
 import 'package:islamic_app/providers/duas_provider.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 
-// Featured category data
+// FEATURED CATEGORY DATA
+
 class _FeaturedCategory {
   final String label;
   final IconData icon;
-  final Color bgColor;
-  final Color iconColor;
   final String categoryKey;
+  final bool usePrimary;
+  final bool useAccent;
 
   const _FeaturedCategory({
     required this.label,
     required this.icon,
-    required this.bgColor,
-    required this.iconColor,
     required this.categoryKey,
+    this.usePrimary = false,
+    this.useAccent = false,
   });
 }
 
@@ -30,34 +32,29 @@ final List<_FeaturedCategory> _featuredCategories = [
   _FeaturedCategory(
     label: 'Morning &\nEvening',
     icon: Icons.wb_sunny_outlined,
-    bgColor: AppColors.primary,
-    iconColor: AppColors.accent,
     categoryKey: 'Morning & Evening',
+    usePrimary: true,
   ),
   _FeaturedCategory(
     label: 'Travel &\nSafety',
     icon: Icons.flight,
-    bgColor: const Color(0xFFF2F4F7),
-    iconColor: AppColors.textSecondary,
     categoryKey: 'Travel',
   ),
   _FeaturedCategory(
     label: 'Health &\nSickness',
     icon: Icons.healing,
-    bgColor: AppColors.accent,
-    iconColor: Colors.white,
     categoryKey: 'Protection',
+    useAccent: true,
   ),
   _FeaturedCategory(
     label: 'Anxiety &\nPeace',
     icon: Icons.self_improvement,
-    bgColor: const Color(0xFFF2F4F7),
-    iconColor: AppColors.textSecondary,
     categoryKey: 'Hardship & Anxiety',
   ),
 ];
 
-// Main Screen
+// MAIN SCREEN
+
 class DuasScreen extends StatefulWidget {
   final VoidCallback? onBack;
 
@@ -79,7 +76,7 @@ class _DuasScreenState extends State<DuasScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: context.background,
       appBar: const Appbar(),
       body: Consumer<DuasProvider>(
         builder: (context, provider, _) {
@@ -87,33 +84,37 @@ class _DuasScreenState extends State<DuasScreen> {
           final isError = provider.status == DuasLoadStatus.error;
           final duas = provider.filteredDuas;
 
+          // LOADING
+
           if (isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+            return Center(
+              child: CircularProgressIndicator(color: context.primary),
             );
           }
+
+          // ERROR
+
           if (isError) {
             return Center(
               child: Text(
                 provider.errorMessage ?? 'Failed to load Duas.',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 14.sp, color: context.textSecondary),
               ),
             );
           }
 
+          // CONTENT
+
           return CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
-              // Header
+              // HEADER
               SliverToBoxAdapter(
                 child: _ScreenHeader(
                   onBack: widget.onBack,
                   searchController: _searchController,
-                  onSearch: (v) {
-                    provider.search(v);
+                  onSearch: (value) {
+                    provider.search(value);
                     setState(() {});
                   },
                   onClear: () {
@@ -124,7 +125,7 @@ class _DuasScreenState extends State<DuasScreen> {
                 ),
               ),
 
-              // Featured Categories
+              // FEATURED CATEGORIES
               if (_searchController.text.isEmpty) ...[
                 SliverToBoxAdapter(
                   child: _FeaturedCategoriesSection(
@@ -136,7 +137,7 @@ class _DuasScreenState extends State<DuasScreen> {
                   ),
                 ),
 
-                // Daily Remembrance label
+                // DAILY REMEMBRANCE
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 12.h),
@@ -148,17 +149,19 @@ class _DuasScreenState extends State<DuasScreen> {
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
+                            color: context.textPrimary,
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => provider.selectCategory('All'),
+                          onTap: () {
+                            provider.selectCategory('All');
+                          },
                           child: Text(
                             'View all →',
                             style: TextStyle(
                               fontSize: 13.sp,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.primary,
+                              color: context.primary,
                             ),
                           ),
                         ),
@@ -168,7 +171,7 @@ class _DuasScreenState extends State<DuasScreen> {
                 ),
               ],
 
-              // Duas list or empty state
+              // EMPTY STATE / DUA LIST
               duas.isEmpty
                   ? SliverFillRemaining(
                       child: Center(
@@ -178,7 +181,7 @@ class _DuasScreenState extends State<DuasScreen> {
                             Icon(
                               Icons.search_off_rounded,
                               size: 48.sp,
-                              color: AppColors.textMuted,
+                              color: context.textMuted,
                             ),
                             SizedBox(height: 12.h),
                             Text(
@@ -187,7 +190,7 @@ class _DuasScreenState extends State<DuasScreen> {
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.textSecondary,
+                                color: context.textSecondary,
                               ),
                             ),
                           ],
@@ -208,12 +211,12 @@ class _DuasScreenState extends State<DuasScreen> {
                             child: _DuaCard(
                               dua: dua,
                               isFavorite: provider.isFavorite(dua),
-                              onToggleFavorite: () =>
-                                  provider.toggleFavorite(dua),
+                              onToggleFavorite: () {
+                                provider.toggleFavorite(dua);
+                              },
                             ),
                           );
                         }
-                        // Featured collection banner at the end
                         return Padding(
                           padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 32.h),
                           child: const _FeaturedCollectionBanner(),
@@ -228,7 +231,8 @@ class _DuasScreenState extends State<DuasScreen> {
   }
 }
 
-// Screen header: back button + title + subtitle + search
+// SCREEN HEADER
+
 class _ScreenHeader extends StatelessWidget {
   final VoidCallback? onBack;
   final TextEditingController searchController;
@@ -249,49 +253,49 @@ class _ScreenHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Back button row (only when onBack is provided)
+          // BACK BUTTON
           if (onBack != null) ...[
             GestureDetector(
               onTap: onBack,
               child: Container(
                 padding: EdgeInsets.all(9.r),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF2F4F3),
+                decoration: BoxDecoration(
+                  color: context.iconBackground,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.arrow_back_ios_new_rounded,
                   size: 16.sp,
-                  color: AppColors.primary,
+                  color: context.primary,
                 ),
               ),
             ),
             SizedBox(height: 14.h),
           ],
 
-          // Title
-          HeaderText(text: "Duas & Supplications"),
+          // TITLE
+          const HeaderText(text: 'Duas & Supplications'),
           SizedBox(height: 6.h),
-
-          // Subtitle
+          // SUBTITLE
           Text(
-            'A curated collection of prophetic prayers for\nevery moment of the believer\'s journey.',
+            'A curated collection of prophetic prayers for\n'
+            'every moment of the believer\'s journey.',
             style: TextStyle(
               fontSize: 12.sp,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
               height: 1.5,
             ),
           ),
           SizedBox(height: 18.h),
 
-          // Search bar
+          // SEARCH
           Container(
             decoration: BoxDecoration(
-              color: AppColors.cardBackground,
+              color: context.card,
               borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.shadow,
+                  color: context.shadow,
                   blurRadius: 6.r,
                   offset: Offset(0, 2.h),
                 ),
@@ -300,30 +304,27 @@ class _ScreenHeader extends StatelessWidget {
             child: TextField(
               controller: searchController,
               onChanged: onSearch,
-              style: TextStyle(fontSize: 13.sp, color: AppColors.textPrimary),
+              style: TextStyle(fontSize: 13.sp, color: context.textPrimary),
               decoration: InputDecoration(
                 hintText: 'Search by theme or keyword...',
-                hintStyle: TextStyle(
-                  fontSize: 13.sp,
-                  color: AppColors.textMuted,
-                ),
+                hintStyle: TextStyle(fontSize: 13.sp, color: context.textMuted),
                 prefixIcon: Icon(
                   Icons.search_rounded,
-                  color: AppColors.textMuted,
+                  color: context.textMuted,
                   size: 20.sp,
                 ),
                 suffixIcon: searchController.text.isNotEmpty
                     ? IconButton(
                         icon: Icon(
                           Icons.clear_rounded,
-                          color: AppColors.textMuted,
+                          color: context.textMuted,
                           size: 18.sp,
                         ),
                         onPressed: onClear,
                       )
                     : null,
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: context.card,
                 contentPadding: EdgeInsets.symmetric(vertical: 12.h),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
@@ -335,10 +336,7 @@ class _ScreenHeader extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
-                  borderSide: const BorderSide(
-                    color: AppColors.accent,
-                    width: 1.5,
-                  ),
+                  borderSide: BorderSide(color: context.accent, width: 1.5),
                 ),
               ),
             ),
@@ -350,7 +348,7 @@ class _ScreenHeader extends StatelessWidget {
   }
 }
 
-// Featured Categories 2×2 grid
+// FEATURED CATEGORIES
 
 class _FeaturedCategoriesSection extends StatelessWidget {
   final String selectedCategory;
@@ -368,14 +366,14 @@ class _FeaturedCategoriesSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section label
+          // SECTION TITLE
           Row(
             children: [
               Container(
                 width: 3.w,
                 height: 16.h,
                 decoration: BoxDecoration(
-                  color: AppColors.accent,
+                  color: context.accent,
                   borderRadius: BorderRadius.circular(4.r),
                 ),
               ),
@@ -385,14 +383,14 @@ class _FeaturedCategoriesSection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
               ),
             ],
           ),
           SizedBox(height: 14.h),
 
-          // 2×2 grid
+          // GRID
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -403,13 +401,15 @@ class _FeaturedCategoriesSection extends StatelessWidget {
               mainAxisSpacing: 12.h,
               childAspectRatio: 1.55,
             ),
-            itemBuilder: (context, i) {
-              final cat = _featuredCategories[i];
-              final isSelected = selectedCategory == cat.categoryKey;
+            itemBuilder: (context, index) {
+              final category = _featuredCategories[index];
+              final isSelected = selectedCategory == category.categoryKey;
               return _CategoryCard(
-                category: cat,
+                category: category,
                 isSelected: isSelected,
-                onTap: () => onCategoryTap(cat.categoryKey),
+                onTap: () {
+                  onCategoryTap(category.categoryKey);
+                },
               );
             },
           ),
@@ -418,6 +418,8 @@ class _FeaturedCategoriesSection extends StatelessWidget {
     );
   }
 }
+
+// CATEGORY CARD
 
 class _CategoryCard extends StatelessWidget {
   final _FeaturedCategory category;
@@ -432,44 +434,52 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Theme-aware category colors
+    final bool coloredCard = category.usePrimary || category.useAccent;
+    final Color backgroundColor = category.usePrimary
+        ? context.primary
+        : category.useAccent
+        ? context.accent
+        : context.iconBackground;
+
+    final Color iconColor = category.usePrimary
+        ? context.accent
+        : category.useAccent
+        ? Colors.white
+        : context.textSecondary;
+    final Color textColor = coloredCard ? Colors.white : context.textPrimary;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
         decoration: BoxDecoration(
-          color: category.bgColor,
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(14.r),
           boxShadow: [
             BoxShadow(
-              color: category.bgColor == AppColors.primary
-                  ? AppColors.primary.withValues(alpha: 0.25)
-                  : category.bgColor == AppColors.accent
-                  ? AppColors.accent.withValues(alpha: 0.25)
-                  : AppColors.shadow,
+              color: coloredCard
+                  ? backgroundColor.withValues(alpha: 0.25)
+                  : context.shadow,
               blurRadius: 8.r,
               offset: Offset(0, 3.h),
             ),
           ],
           border: isSelected
-              ? Border.all(color: AppColors.accent, width: 2)
+              ? Border.all(color: context.accent, width: 2)
               : null,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(category.icon, color: category.iconColor, size: 22.sp),
+            Icon(category.icon, color: iconColor, size: 22.sp),
             Text(
               category.label,
               style: TextStyle(
                 fontSize: 13.sp,
                 fontWeight: FontWeight.w700,
-                color:
-                    (category.bgColor == AppColors.primary ||
-                        category.bgColor == AppColors.accent)
-                    ? Colors.white
-                    : AppColors.textPrimary,
+                color: textColor,
                 height: 1.3,
               ),
             ),
@@ -480,7 +490,8 @@ class _CategoryCard extends StatelessWidget {
   }
 }
 
-// Dua Card
+// DUA CARD
+
 class _DuaCard extends StatelessWidget {
   final DuaModel dua;
   final bool isFavorite;
@@ -495,7 +506,10 @@ class _DuaCard extends StatelessWidget {
   void _copyToClipboard(BuildContext context) {
     Clipboard.setData(
       ClipboardData(
-        text: '${dua.arabicText}\n\n${dua.translation}\n\n— ${dua.reference}',
+        text:
+            '${dua.arabicText}\n\n'
+            '${dua.translation}\n\n'
+            '— ${dua.reference}',
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(
@@ -520,11 +534,11 @@ class _DuaCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: context.card,
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: context.shadow,
             blurRadius: 10.r,
             offset: Offset(0, 3.h),
           ),
@@ -533,26 +547,26 @@ class _DuaCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top accent stripe with category tag + bookmark
+          // TOP BAR
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.04),
+              color: context.primary.withValues(alpha: 0.04),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(18.r),
                 topRight: Radius.circular(18.r),
               ),
               border: Border(
-                bottom: BorderSide(color: AppColors.divider, width: 0.8),
+                bottom: BorderSide(color: context.divider, width: 0.8),
               ),
             ),
             child: Row(
               children: [
-                // Category tag
+                // CATEGORY TAG
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 3.h),
                   decoration: BoxDecoration(
-                    color: AppColors.accentLight.withValues(alpha: 0.45),
+                    color: context.accentLight.withValues(alpha: 0.45),
                     borderRadius: BorderRadius.circular(6.r),
                   ),
                   child: Text(
@@ -560,43 +574,45 @@ class _DuaCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 9.sp,
                       fontWeight: FontWeight.w800,
-                      color: const Color(0xFF7A5C00),
+                      color: context.isDark
+                          ? const Color(0xFFE7C96F)
+                          : const Color(0xFF7A5C00),
                       letterSpacing: 0.7,
                     ),
                   ),
                 ),
                 const Spacer(),
-                // Bookmark
+
+                // BOOKMARK
                 GestureDetector(
                   onTap: onToggleFavorite,
                   child: Icon(
                     isFavorite ? Icons.bookmark : Icons.bookmark_border,
                     size: 19.sp,
-                    color: isFavorite ? AppColors.primary : AppColors.textMuted,
+                    color: isFavorite ? context.primary : context.textMuted,
                   ),
                 ),
               ],
             ),
           ),
 
-          // Body
+          // BODY
           Padding(
             padding: EdgeInsets.fromLTRB(18.w, 16.h, 18.w, 14.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title
+                // TITLE
                 Text(
                   dua.title,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: context.textPrimary,
                   ),
                 ),
                 SizedBox(height: 16.h),
-
-                // Arabic text
+                // ARABIC
                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
@@ -607,13 +623,12 @@ class _DuaCard extends StatelessWidget {
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Amiri',
-                      color: AppColors.textPrimary,
+                      color: context.textPrimary,
                       height: 2.0,
                     ),
                   ),
                 ),
-
-                // Transliteration
+                // TRANSLITERATION
                 if (dua.transliteration.isNotEmpty) ...[
                   SizedBox(height: 10.h),
                   Text(
@@ -621,32 +636,27 @@ class _DuaCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontStyle: FontStyle.italic,
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                       height: 1.5,
                     ),
                   ),
                 ],
                 SizedBox(height: 12.h),
-
-                // Translation
+                // TRANSLATION
                 Text(
                   dua.translation,
                   style: TextStyle(
                     fontSize: 13.sp,
-                    color: AppColors.textPrimary.withValues(alpha: 0.85),
+                    color: context.textPrimary.withValues(alpha: 0.85),
                     height: 1.55,
                   ),
                 ),
                 SizedBox(height: 14.h),
-
-                // Divider
-                Divider(color: AppColors.divider, height: 1),
+                Divider(color: context.divider, height: 1),
                 SizedBox(height: 12.h),
-
-                // Reference + actions
+                // REFERENCE + ACTIONS
                 Row(
                   children: [
-                    // Reference
                     Expanded(
                       child: Row(
                         children: [
@@ -655,7 +665,7 @@ class _DuaCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 11.sp,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.textMuted,
+                              color: context.textMuted,
                             ),
                           ),
                           Flexible(
@@ -665,7 +675,7 @@ class _DuaCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 11.sp,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textSecondary,
+                                color: context.textSecondary,
                               ),
                             ),
                           ),
@@ -673,20 +683,22 @@ class _DuaCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 8.w),
-
-                    // Share button
+                    // Share
                     _ActionButton(
                       icon: Icons.share_outlined,
                       label: 'Share',
-                      onTap: () => _shareSnackbar(context),
+                      onTap: () {
+                        _shareSnackbar(context);
+                      },
                     ),
                     SizedBox(width: 8.w),
-
-                    // Copy button
+                    // Copy
                     _ActionButton(
                       icon: Icons.copy_rounded,
                       label: 'Copy',
-                      onTap: () => _copyToClipboard(context),
+                      onTap: () {
+                        _copyToClipboard(context);
+                      },
                     ),
                   ],
                 ),
@@ -699,6 +711,7 @@ class _DuaCard extends StatelessWidget {
   }
 }
 
+// ACTION BUTTON
 class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -716,14 +729,14 @@ class _ActionButton extends StatelessWidget {
       onTap: onTap,
       child: Row(
         children: [
-          Icon(icon, size: 14.sp, color: AppColors.textSecondary),
+          Icon(icon, size: 14.sp, color: context.textSecondary),
           SizedBox(width: 3.w),
           Text(
             label,
             style: TextStyle(
               fontSize: 11.sp,
               fontWeight: FontWeight.w500,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
             ),
           ),
         ],
@@ -732,14 +745,13 @@ class _ActionButton extends StatelessWidget {
   }
 }
 
-// Featured Collection Banner (bottom card)
+// FEATURED COLLECTION BANNER
 class _FeaturedCollectionBanner extends StatelessWidget {
   const _FeaturedCollectionBanner();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height: 160.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18.r),
         image: const DecorationImage(
@@ -748,7 +760,7 @@ class _FeaturedCollectionBanner extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: context.shadow,
             blurRadius: 12.r,
             offset: Offset(0, 4.h),
           ),
@@ -771,11 +783,11 @@ class _FeaturedCollectionBanner extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            // Label tag
+            // LABEL
             Container(
               padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 3.h),
               decoration: BoxDecoration(
-                color: AppColors.accent.withValues(alpha: 0.9),
+                color: context.accent.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(6.r),
               ),
               child: Text(
@@ -790,11 +802,11 @@ class _FeaturedCollectionBanner extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
 
-            // Title
-            Text(
+            // TITLE
+            const Text(
               'Healing &\nRestoration',
               style: TextStyle(
-                fontSize: 18.sp,
+                fontSize: 18,
                 fontWeight: FontWeight.w800,
                 color: Colors.white,
                 height: 1.2,
@@ -802,9 +814,10 @@ class _FeaturedCollectionBanner extends StatelessWidget {
             ),
             SizedBox(height: 4.h),
 
-            // Subtitle
+            // SUBTITLE
             Text(
-              'Prophetic supplications that provide hope and spiritual wellbeing during trials.',
+              'Prophetic supplications that provide '
+              'hope and spiritual wellbeing during trials.',
               style: TextStyle(
                 fontSize: 11.sp,
                 color: Colors.white.withValues(alpha: 0.8),
@@ -812,23 +825,20 @@ class _FeaturedCollectionBanner extends StatelessWidget {
               ),
             ),
             SizedBox(height: 12.h),
-
-            // CTA button
+            // CTA
             GestureDetector(
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     duration: Duration(seconds: 1),
-                    content: Text(
-                      'This feature will be available in the next update!',
-                    ),
+                    content: Text('This feature will be available '),
                   ),
                 );
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 7.h),
                 decoration: BoxDecoration(
-                  color: AppColors.accent,
+                  color: context.accent,
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Row(
@@ -843,9 +853,9 @@ class _FeaturedCollectionBanner extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 4.w),
-                    Icon(
+                    const Icon(
                       Icons.arrow_forward_rounded,
-                      size: 13.sp,
+                      size: 13,
                       color: Colors.white,
                     ),
                   ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'event_schedule_card.dart';
 
 class EventScheduleSection extends StatelessWidget {
@@ -16,8 +16,8 @@ class EventScheduleSection extends StatelessWidget {
             Container(
               width: 6.w,
               height: 6.w,
-              decoration: const BoxDecoration(
-                color: AppColors.accent,
+              decoration: BoxDecoration(
+                color: context.accent,
                 shape: BoxShape.circle,
               ),
             ),
@@ -25,7 +25,7 @@ class EventScheduleSection extends StatelessWidget {
             Text(
               'Events Schedule',
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w700,
               ),
@@ -41,7 +41,7 @@ class EventScheduleSection extends StatelessWidget {
               'the end of Ramadan.',
           tag: 'Holiday',
           tagBackground: Color(0xFFEDE6C7),
-          accentColor: AppColors.accent,
+          accentColor: context.accent,
         ),
         SizedBox(height: 15.h),
         EventScheduleCard(
@@ -52,7 +52,7 @@ class EventScheduleSection extends StatelessWidget {
               'a sacred month of peace.',
           tag: 'Sunnah',
           tagBackground: Color(0xFFE7E9E8),
-          accentColor: AppColors.iconBackground,
+          accentColor: context.iconBackground,
         ),
         SizedBox(height: 15.h),
         EventScheduleCard(
@@ -63,7 +63,7 @@ class EventScheduleSection extends StatelessWidget {
               'during the Hajj season.',
           tag: 'Major',
           tagBackground: Color(0xFFFFD8D5),
-          accentColor: AppColors.iconBackground,
+          accentColor: context.iconBackground,
         ),
       ],
     );

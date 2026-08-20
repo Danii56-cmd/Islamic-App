@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 
 class IslamicInfoCard extends StatelessWidget {
   final String image;
@@ -41,7 +41,7 @@ class IslamicInfoCard extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                color: AppColors.textOnPrimary,
+                color: context.textOnPrimary,
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w700,
               ),
@@ -50,7 +50,7 @@ class IslamicInfoCard extends StatelessWidget {
             Text(
               description,
               style: TextStyle(
-                color: AppColors.prayerCardText,
+                color: context.prayerCardText,
                 fontSize: 13.sp,
                 height: 1.4,
               ),

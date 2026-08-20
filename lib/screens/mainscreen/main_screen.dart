@@ -57,8 +57,6 @@ class _MainScreenState extends State<MainScreen> {
   void _closeQibla() => setState(() => _prayerShowQibla = false);
   void _closeDuas() => setState(() => _quranShowDuas = false);
 
-  /// Returns true if this back press was "consumed" here
-  /// (i.e. we handled it and the exit dialog should NOT show).
   bool _onBackPressed() {
     // 1. A nested sub-view is open on the current tab -> close just that.
     if (_homeShowCalendar) {

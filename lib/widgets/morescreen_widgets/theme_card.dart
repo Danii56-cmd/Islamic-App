@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
+import 'package:islamic_app/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
-class ThemeCard extends StatefulWidget {
+class ThemeCard extends StatelessWidget {
   const ThemeCard({super.key});
 
   @override
-  State<ThemeCard> createState() => _ThemeCardState();
-}
-
-class _ThemeCardState extends State<ThemeCard> {
-  bool isDarkMode = false;
-
-  @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeChangerProvider>();
+    final isDarkMode = themeProvider.isDarkMode;
+    final theme = Theme.of(context);
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: context.textMuted.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow.withValues(alpha: 0.04),
+            color: theme.shadowColor.withValues(alpha: 0.08),
             blurRadius: 6.r,
             offset: Offset(0, 2.h),
           ),
@@ -32,23 +31,17 @@ class _ThemeCardState extends State<ThemeCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          // TOP ROW
           Row(
             children: [
               Icon(
                 Icons.dark_mode_outlined,
-                color: AppColors.accent,
+                color: context.accent,
                 size: 28.sp,
               ),
-
               const Spacer(),
-
-              // Theme Switch
               GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isDarkMode = !isDarkMode;
-                  });
-                },
+                onTap: themeProvider.toggleTheme,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 250),
                   curve: Curves.easeInOut,
@@ -56,14 +49,15 @@ class _ThemeCardState extends State<ThemeCard> {
                   padding: EdgeInsets.all(4.r),
                   decoration: BoxDecoration(
                     color: isDarkMode
-                        ? AppColors.primaryDark
-                        : AppColors.textMuted.withValues(alpha: 0.2),
+                        ? context.primary
+                        : context.primary.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(30.r),
                   ),
+
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      // Icons
+                      // BACKGROUND ICONS
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -73,8 +67,8 @@ class _ThemeCardState extends State<ThemeCard> {
                               Icons.wb_sunny_outlined,
                               size: 16.sp,
                               color: isDarkMode
-                                  ? AppColors.textMuted
-                                  : AppColors.primaryDark,
+                                  ? context.textOnPrimary
+                                  : context.primary,
                             ),
                           ),
                           Padding(
@@ -83,14 +77,14 @@ class _ThemeCardState extends State<ThemeCard> {
                               Icons.dark_mode_outlined,
                               size: 16.sp,
                               color: isDarkMode
-                                  ? Colors.white
-                                  : AppColors.textMuted,
+                                  ? context.textPrimary.withValues(alpha: 0.8)
+                                  : context.primary,
                             ),
                           ),
                         ],
                       ),
 
-                      // Sliding circle
+                      // MOVING CIRCLE
                       AnimatedAlign(
                         duration: const Duration(milliseconds: 250),
                         curve: Curves.easeInOut,
@@ -109,7 +103,7 @@ class _ThemeCardState extends State<ThemeCard> {
                                 ? Icons.dark_mode_outlined
                                 : Icons.wb_sunny_outlined,
                             size: 16.sp,
-                            color: AppColors.primaryDark,
+                            color: context.primary,
                           ),
                         ),
                       ),
@@ -120,20 +114,25 @@ class _ThemeCardState extends State<ThemeCard> {
             ],
           ),
           SizedBox(height: 18.h),
+
+          // TITLE
           Text(
-            "Appearance",
-            style: TextStyle(
+            'Appearance',
+
+            style: theme.textTheme.titleMedium?.copyWith(
               fontSize: 16.sp,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
             ),
           ),
           SizedBox(height: 3.h),
+
+          // DESCRIPTION
           Text(
             isDarkMode
-                ? "Dark theme is enabled"
-                : "Switch between light and dark themes",
-            style: TextStyle(fontSize: 12.sp, color: AppColors.textMuted),
+                ? 'Dark theme is enabled'
+                : 'Switch between light and dark themes',
+
+            style: theme.textTheme.bodySmall?.copyWith(fontSize: 12.sp),
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:provider/provider.dart';
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/providers/prayer_provider.dart';
@@ -80,7 +81,7 @@ class UpcomingPrayer extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 28.sp,
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.textOnPrimary,
+                                color: context.textOnPrimary,
                               ),
                             ),
                           ],
@@ -112,23 +113,17 @@ class UpcomingPrayer extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: context.textPrimary,
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
-
                 SizedBox(height: 16.h),
 
                 // DIVIDER
-                const Divider(
-                  thickness: 0.3,
-                  height: 1,
-                  color: AppColors.divider,
-                ),
-
+                Divider(thickness: 0.3, height: 1, color: context.divider),
                 SizedBox(height: 12.h),
 
                 // PRAYER TIMES
@@ -172,8 +167,8 @@ class UpcomingPrayer extends StatelessWidget {
                               time,
                               style: TextStyle(
                                 color: isActive
-                                    ? AppColors.accent
-                                    : AppColors.textOnPrimary,
+                                    ? context.accent
+                                    : context.textOnPrimary,
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w600,
                               ),

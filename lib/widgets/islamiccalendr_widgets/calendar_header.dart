@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/widgets/header_text.dart';
 
 class CalendarHeader extends StatelessWidget {
@@ -56,20 +57,20 @@ class _CalendarChip extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 13.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: context.cardBackground,
           borderRadius: BorderRadius.circular(30.r),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 14.sp, color: AppColors.textSecondary),
+            Icon(icon, size: 14.sp, color: context.textSecondary),
             SizedBox(width: 7.w),
             Flexible(
               child: Text(
                 text,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w500,
                 ),
@@ -80,4 +81,8 @@ class _CalendarChip extends StatelessWidget {
       ),
     );
   }
+}
+
+extension on BuildContext {
+  Color? get cardBackground => null;
 }

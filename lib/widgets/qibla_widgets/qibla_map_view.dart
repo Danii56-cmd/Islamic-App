@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:latlong2/latlong.dart';
 
 class QiblaMapView extends StatefulWidget {
@@ -182,11 +183,11 @@ class _QiblaMapViewState extends State<QiblaMapView> {
           Container(
             width: 38.r,
             height: 38.r,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.iconBackground,
+              color: context.iconBackground,
             ),
-            child: Icon(Icons.explore, color: AppColors.primary, size: 21.sp),
+            child: Icon(Icons.explore, color: context.primary, size: 21.sp),
           ),
           SizedBox(width: 10.w),
           Expanded(
@@ -198,7 +199,7 @@ class _QiblaMapViewState extends State<QiblaMapView> {
                   'Qibla Direction',
                   style: TextStyle(
                     fontSize: 11.sp,
-                    color: AppColors.textSecondary,
+                    color: context.textSecondary,
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -219,7 +220,7 @@ class _QiblaMapViewState extends State<QiblaMapView> {
             style: TextStyle(
               fontSize: 15.sp,
               fontWeight: FontWeight.w700,
-              color: AppColors.primary,
+              color: context.primary,
             ),
           ),
         ],
@@ -255,10 +256,7 @@ class _QiblaMapViewState extends State<QiblaMapView> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(15.r),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-          ),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 8),
         ],
       ),
       child: Column(
@@ -270,7 +268,7 @@ class _QiblaMapViewState extends State<QiblaMapView> {
             style: TextStyle(
               fontSize: 9.sp,
               letterSpacing: 1,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
             ),
           ),
           SizedBox(height: 4.h),

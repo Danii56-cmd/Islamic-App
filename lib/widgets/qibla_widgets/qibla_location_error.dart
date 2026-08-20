@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 
 class QiblaLocationError extends StatelessWidget {
   final VoidCallback onRetry;
@@ -37,7 +38,7 @@ class QiblaLocationError extends StatelessWidget {
               Text(
                 'Please enable location permission to calculate your Qibla direction.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13.sp, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: 13.sp, color: context.textSecondary),
               ),
               SizedBox(height: 20.h),
               ElevatedButton(
@@ -45,14 +46,20 @@ class QiblaLocationError extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 12.h,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14.r),
                   ),
                 ),
                 child: Text(
                   'Try Again',
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],

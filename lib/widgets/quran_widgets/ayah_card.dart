@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 
 enum AyahTag { highlight, saved, none }
 
@@ -48,9 +48,9 @@ class _AyahCardState extends State<AyahCard> {
   Color get _tagColor {
     switch (widget.tag) {
       case AyahTag.saved:
-        return AppColors.accent;
+        return context.accent;
       case AyahTag.highlight:
-        return AppColors.accent;
+        return context.accent;
       case AyahTag.none:
         return Colors.transparent;
     }
@@ -72,11 +72,11 @@ class _AyahCardState extends State<AyahCard> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: context.card,
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow.withValues(alpha: 0.06),
+            color: context.shadow.withValues(alpha: 0.06),
             blurRadius: 8.r,
             offset: Offset(0, 3.h),
           ),
@@ -104,9 +104,7 @@ class _AyahCardState extends State<AyahCard> {
                   child: Icon(
                     _bookmarked ? Icons.bookmark : Icons.bookmark_outline,
                     size: 20.sp,
-                    color: _bookmarked
-                        ? AppColors.primary
-                        : AppColors.textMuted,
+                    color: _bookmarked ? context.primary : context.textMuted,
                   ),
                 ),
                 SizedBox(width: 14.w),
@@ -116,7 +114,7 @@ class _AyahCardState extends State<AyahCard> {
                   child: Icon(
                     Icons.share_outlined,
                     size: 20.sp,
-                    color: AppColors.textMuted,
+                    color: context.textMuted,
                   ),
                 ),
                 const Spacer(),
@@ -138,7 +136,7 @@ class _AyahCardState extends State<AyahCard> {
               widget.arabicText,
               style: TextStyle(
                 fontSize: 26.sp,
-                color: AppColors.textPrimary,
+                color: context.textPrimary,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Amiri',
                 height: 2.0,
@@ -151,7 +149,7 @@ class _AyahCardState extends State<AyahCard> {
               widget.translation,
               style: TextStyle(
                 fontSize: 13.5.sp,
-                color: AppColors.textSecondary,
+                color: context.textSecondary,
                 fontWeight: FontWeight.w400,
                 height: 1.6,
               ),
@@ -161,6 +159,10 @@ class _AyahCardState extends State<AyahCard> {
       ),
     );
   }
+}
+
+extension on BuildContext {
+  Color? get cardBackground => null;
 }
 
 class _AyahNumberBadge extends StatelessWidget {
@@ -173,7 +175,7 @@ class _AyahNumberBadge extends StatelessWidget {
       width: 36.r,
       height: 36.r,
       decoration: BoxDecoration(
-        color: AppColors.textMuted.withValues(alpha: 0.10),
+        color: context.textMuted.withValues(alpha: 0.10),
         shape: BoxShape.circle,
       ),
       alignment: Alignment.center,
@@ -182,7 +184,7 @@ class _AyahNumberBadge extends StatelessWidget {
         style: TextStyle(
           fontSize: 13.sp,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
+          color: context.textPrimary,
         ),
       ),
     );

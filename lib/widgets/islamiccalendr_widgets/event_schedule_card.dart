@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 
 class EventScheduleCard extends StatelessWidget {
   final String date;
@@ -25,7 +25,7 @@ class EventScheduleCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: context.cardBackground,
         borderRadius: BorderRadius.circular(14.r),
       ),
       child: IntrinsicHeight(
@@ -52,7 +52,7 @@ class EventScheduleCard extends StatelessWidget {
                         Text(
                           date,
                           style: TextStyle(
-                            color: AppColors.textSecondary,
+                            color: context.textSecondary,
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w800,
                           ),
@@ -70,7 +70,7 @@ class EventScheduleCard extends StatelessWidget {
                           child: Text(
                             tag,
                             style: TextStyle(
-                              color: AppColors.textSecondary,
+                              color: context.textSecondary,
                               fontSize: 9.sp,
                               fontWeight: FontWeight.w700,
                             ),
@@ -82,7 +82,7 @@ class EventScheduleCard extends StatelessWidget {
                     Text(
                       title,
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: context.textPrimary,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
                       ),
@@ -91,7 +91,7 @@ class EventScheduleCard extends StatelessWidget {
                     Text(
                       description,
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: context.textSecondary,
                         fontSize: 13.sp,
                         height: 1.45,
                       ),
@@ -105,4 +105,8 @@ class EventScheduleCard extends StatelessWidget {
       ),
     );
   }
+}
+
+extension on BuildContext {
+  Color? get cardBackground => null;
 }

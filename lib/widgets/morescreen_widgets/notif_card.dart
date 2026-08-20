@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/widgets/morescreen_widgets/reusable_card.dart';
 
 class NotificationCard extends StatefulWidget {
@@ -15,7 +15,7 @@ class _NotificationCardState extends State<NotificationCard> {
   @override
   Widget build(BuildContext context) {
     return MyCard(
-      backgroundColor: AppColors.textMuted.withValues(alpha: 0.1),
+      backgroundColor: context.textMuted.withValues(alpha: 0.1),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,10 +24,10 @@ class _NotificationCardState extends State<NotificationCard> {
             children: [
               CircleAvatar(
                 radius: 22.r,
-                backgroundColor: AppColors.accentLight.withValues(alpha: 0.2),
+                backgroundColor: context.accentLight.withValues(alpha: 0.2),
                 child: Icon(
                   Icons.notifications_active,
-                  color: AppColors.accent,
+                  color: context.accent,
                   size: 24.sp,
                 ),
               ),
@@ -42,7 +42,7 @@ class _NotificationCardState extends State<NotificationCard> {
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: context.textPrimary,
                       ),
                     ),
                     SizedBox(height: 3.h),
@@ -50,7 +50,7 @@ class _NotificationCardState extends State<NotificationCard> {
                       "Prayer times, daily verses, and community updates",
                       style: TextStyle(
                         fontSize: 12.sp,
-                        color: AppColors.textMuted,
+                        color: context.textMuted,
                         height: 1.3,
                       ),
                     ),
@@ -66,7 +66,7 @@ class _NotificationCardState extends State<NotificationCard> {
                 isNotification ? "Enabled" : "Disabled",
                 style: TextStyle(
                   fontSize: 12.sp,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -79,8 +79,8 @@ class _NotificationCardState extends State<NotificationCard> {
                   });
                 },
                 activeThumbColor: Colors.white,
-                activeTrackColor: AppColors.primary,
-                inactiveThumbColor: AppColors.textMuted,
+                activeTrackColor: context.primary,
+                inactiveThumbColor: context.textMuted,
                 inactiveTrackColor: Colors.transparent,
               ),
             ],

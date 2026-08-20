@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/core/appconstants.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/screens/calendar/islamiccalendar_screen.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/header_text.dart';
@@ -30,7 +31,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: context.background,
       appBar: const Appbar(),
       body: showCalendar
           ? IslamicCalendarScreen(onBack: onCloseCalendar)
@@ -47,7 +48,7 @@ class HomeScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.textMuted,
+                        color: context.textMuted,
                         letterSpacing: 0.8,
                       ),
                     ),
@@ -57,7 +58,7 @@ class HomeScreen extends StatelessWidget {
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: AppColors.cardBackground,
+                        color: context.card,
                         borderRadius: BorderRadius.circular(20.r),
                         boxShadow: [
                           BoxShadow(
@@ -90,7 +91,7 @@ class HomeScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.textSecondary,
+                                color: context.textSecondary,
                                 height: 1.4,
                               ),
                             ),
@@ -100,7 +101,7 @@ class HomeScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.textPrimary,
+                                color: context.textPrimary,
                               ),
                             ),
                           ],
@@ -121,6 +122,7 @@ class HomeScreen extends StatelessWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         children: [
                           _featureCard(
+                            context: context,
                             icon: Icons.explore_outlined,
                             title: "Qibla",
                             onTap: () {
@@ -128,6 +130,7 @@ class HomeScreen extends StatelessWidget {
                             },
                           ),
                           _featureCard(
+                            context: context,
                             icon: Icons.menu_book_rounded,
                             title: "Quran",
                             onTap: () {
@@ -135,6 +138,7 @@ class HomeScreen extends StatelessWidget {
                             },
                           ),
                           _featureCard(
+                            context: context,
                             icon: Icons.history_edu,
                             title: "Hadith",
                             onTap: () {
@@ -146,6 +150,7 @@ class HomeScreen extends StatelessWidget {
                             },
                           ),
                           _featureCard(
+                            context: context,
                             icon: Icons.volunteer_activism_outlined,
                             title: "Duas",
                             onTap: () {
@@ -153,6 +158,7 @@ class HomeScreen extends StatelessWidget {
                             },
                           ),
                           _featureCard(
+                            context: context,
                             icon: Icons.calendar_month_rounded,
                             title: "Islamic Calendar",
                             onTap: () {
@@ -160,6 +166,7 @@ class HomeScreen extends StatelessWidget {
                             },
                           ),
                           _featureCard(
+                            context: context,
                             icon: Icons.bubble_chart,
                             title: "More",
                             onTap: () {
@@ -234,7 +241,7 @@ class JournalContainer extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
-                color: AppColors.textOnPrimary,
+                color: context.textPrimary,
               ),
             ),
             SizedBox(height: 6.h),
@@ -243,7 +250,7 @@ class JournalContainer extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13.sp,
                 fontWeight: FontWeight.w400,
-                color: AppColors.textOnPrimary.withValues(alpha: 0.8),
+                color: context.textPrimary.withValues(alpha: 0.8),
                 height: 1.4,
               ),
             ),
@@ -258,12 +265,13 @@ Widget _featureCard({
   required IconData icon,
   required String title,
   required VoidCallback onTap,
+  required BuildContext context,
 }) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: context.card,
         borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
@@ -282,8 +290,8 @@ Widget _featureCard({
             Container(
               width: 38.r,
               height: 38.r,
-              decoration: const BoxDecoration(
-                color: AppColors.iconBackground,
+              decoration: BoxDecoration(
+                color: context.iconBackground,
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: AppColors.primary, size: 20.sp),
@@ -296,7 +304,7 @@ Widget _featureCard({
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: context.primaryText,
                 ),
               ),
             ),
@@ -305,4 +313,8 @@ Widget _featureCard({
       ),
     ),
   );
+}
+
+extension on BuildContext {
+  Color? get primaryText => null;
 }

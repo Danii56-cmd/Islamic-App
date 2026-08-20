@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});
@@ -14,7 +14,7 @@ class ProfileHeader extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 54.r,
-              backgroundColor: AppColors.primaryDark,
+              backgroundColor: context.primaryDark,
               child: Icon(Icons.person, size: 56.sp, color: Colors.white),
             ),
             Positioned(
@@ -22,7 +22,7 @@ class ProfileHeader extends StatelessWidget {
               bottom: 0,
               child: CircleAvatar(
                 radius: 14.r,
-                backgroundColor: AppColors.accent,
+                backgroundColor: context.accent,
                 child: Icon(Icons.edit, size: 14.sp, color: Colors.black),
               ),
             ),
@@ -34,13 +34,13 @@ class ProfileHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: 22.sp,
             fontWeight: FontWeight.bold,
-            color: AppColors.primaryDark,
+            color: context.primary,
           ),
         ),
         SizedBox(height: 4.h),
         Text(
           "ahmed.abdullah@example.com",
-          style: TextStyle(fontSize: 14.sp, color: AppColors.textMuted),
+          style: TextStyle(fontSize: 14.sp, color: context.textMuted),
         ),
       ],
     );

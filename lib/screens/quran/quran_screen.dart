@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:provider/provider.dart';
 import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/providers/quran_provider.dart';
@@ -36,7 +37,7 @@ class _QuranScreenState extends State<QuranScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: context.background,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
@@ -50,7 +51,10 @@ class _QuranScreenState extends State<QuranScreen> {
               expand: false,
               builder: (_, scrollController) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 16.h,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -59,7 +63,7 @@ class _QuranScreenState extends State<QuranScreen> {
                           width: 40.w,
                           height: 4.h,
                           decoration: BoxDecoration(
-                            color: AppColors.textMuted.withValues(alpha: 0.3),
+                            color: context.textMuted.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(2.r),
                           ),
                         ),
@@ -73,7 +77,7 @@ class _QuranScreenState extends State<QuranScreen> {
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.textPrimary,
+                                color: context.textPrimary,
                               ),
                             ),
                           ),
@@ -82,7 +86,7 @@ class _QuranScreenState extends State<QuranScreen> {
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.textSecondary,
+                              color: context.textSecondary,
                             ),
                           ),
                         ],
@@ -92,21 +96,21 @@ class _QuranScreenState extends State<QuranScreen> {
                       TextField(
                         style: TextStyle(
                           fontSize: 13.sp,
-                          color: AppColors.textPrimary,
+                          color: context.textPrimary,
                         ),
                         decoration: InputDecoration(
                           hintText: 'Search by name or number...',
                           hintStyle: TextStyle(
                             fontSize: 13.sp,
-                            color: AppColors.textMuted,
+                            color: context.textMuted,
                           ),
                           prefixIcon: Icon(
                             Icons.search_rounded,
-                            color: AppColors.textMuted,
+                            color: context.textMuted,
                             size: 20.sp,
                           ),
                           filled: true,
-                          fillColor: AppColors.textMuted.withValues(alpha: 0.08),
+                          fillColor: context.textMuted.withValues(alpha: 0.08),
                           contentPadding: EdgeInsets.symmetric(vertical: 10.h),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
@@ -144,12 +148,12 @@ class _QuranScreenState extends State<QuranScreen> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? AppColors.accent.withValues(alpha: 0.15)
-                                      : AppColors.cardBackground,
+                                      ? context.accent.withValues(alpha: 0.15)
+                                      : context.card,
                                   borderRadius: BorderRadius.circular(14.r),
                                   border: Border.all(
                                     color: isSelected
-                                        ? AppColors.accent
+                                        ? context.accent
                                         : Colors.transparent,
                                     width: 1.5,
                                   ),
@@ -160,7 +164,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                       width: 34.r,
                                       height: 34.r,
                                       decoration: BoxDecoration(
-                                        color: AppColors.textMuted.withValues(
+                                        color: context.textMuted.withValues(
                                           alpha: 0.1,
                                         ),
                                         shape: BoxShape.circle,
@@ -171,7 +175,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                         style: TextStyle(
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w700,
-                                          color: AppColors.textPrimary,
+                                          color: context.textPrimary,
                                         ),
                                       ),
                                     ),
@@ -186,7 +190,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                             style: TextStyle(
                                               fontSize: 14.sp,
                                               fontWeight: FontWeight.w700,
-                                              color: AppColors.textPrimary,
+                                              color: context.textPrimary,
                                             ),
                                           ),
                                           SizedBox(height: 2.h),
@@ -194,7 +198,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                             '${surah.englishNameTranslation} • ${surah.numberOfAyahs} Verses',
                                             style: TextStyle(
                                               fontSize: 11.sp,
-                                              color: AppColors.textSecondary,
+                                              color: context.textSecondary,
                                             ),
                                           ),
                                         ],
@@ -206,7 +210,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                         fontSize: 18.sp,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: 'Amiri',
-                                        color: AppColors.primary,
+                                        color: context.primary,
                                       ),
                                       textDirection: TextDirection.rtl,
                                     ),
@@ -235,13 +239,14 @@ class _QuranScreenState extends State<QuranScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: context.background,
       appBar: const Appbar(),
       body: Consumer<QuranProvider>(
         builder: (context, provider, _) {
           final surah = provider.currentSurah;
-          final surahTitle =
-              surah != null ? 'Surah ${surah.englishName}' : 'Surah Al-Kahf';
+          final surahTitle = surah != null
+              ? 'Surah ${surah.englishName}'
+              : 'Surah Al-Kahf';
           final surahSubtitle = surah != null
               ? surah.subtitle
               : 'The Cave  •  110 Verses  •  Meccan';
@@ -315,7 +320,7 @@ class _QuranScreenState extends State<QuranScreen> {
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w400,
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                     ),
                   ),
                   SizedBox(height: 14.h),
@@ -328,22 +333,21 @@ class _QuranScreenState extends State<QuranScreen> {
                         controller: _searchController,
                         style: TextStyle(
                           fontSize: 13.sp,
-                          color: AppColors.textPrimary,
+                          color: context.textPrimary,
                         ),
                         decoration: InputDecoration(
                           hintText: 'Search Surah or Verse...',
                           hintStyle: TextStyle(
                             fontSize: 13.sp,
-                            color: AppColors.textMuted,
+                            color: context.textMuted,
                           ),
                           prefixIcon: Icon(
                             Icons.search_rounded,
-                            color: AppColors.textMuted,
+                            color: context.textMuted,
                             size: 20.sp,
                           ),
                           filled: true,
-                          fillColor:
-                              AppColors.textMuted.withValues(alpha: 0.07),
+                          fillColor: context.textMuted.withValues(alpha: 0.07),
                           contentPadding: EdgeInsets.symmetric(vertical: 12.h),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
@@ -355,8 +359,8 @@ class _QuranScreenState extends State<QuranScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
-                            borderSide: const BorderSide(
-                              color: AppColors.accent,
+                            borderSide: BorderSide(
+                              color: context.accent,
                               width: 1.5,
                             ),
                           ),
@@ -370,9 +374,9 @@ class _QuranScreenState extends State<QuranScreen> {
                   if (isLoading)
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 40.h),
-                      child: const Center(
+                      child: Center(
                         child: CircularProgressIndicator(
-                          color: AppColors.primary,
+                          color: context.primary,
                         ),
                       ),
                     )
@@ -380,7 +384,7 @@ class _QuranScreenState extends State<QuranScreen> {
                     Container(
                       padding: EdgeInsets.all(20.w),
                       decoration: BoxDecoration(
-                        color: AppColors.cardBackground,
+                        color: context.card,
                         borderRadius: BorderRadius.circular(16.r),
                       ),
                       child: Column(
@@ -388,7 +392,7 @@ class _QuranScreenState extends State<QuranScreen> {
                           Icon(
                             Icons.cloud_off_rounded,
                             size: 36.sp,
-                            color: AppColors.textMuted,
+                            color: context.textMuted,
                           ),
                           SizedBox(height: 10.h),
                           Text(
@@ -396,7 +400,7 @@ class _QuranScreenState extends State<QuranScreen> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13.sp,
-                              color: AppColors.textSecondary,
+                              color: context.textSecondary,
                             ),
                           ),
                           SizedBox(height: 12.h),
@@ -427,11 +431,10 @@ class _QuranScreenState extends State<QuranScreen> {
                         tag: i == 0
                             ? AyahTag.highlight
                             : (provider.isBookmarked(ayahs[i])
-                                ? AyahTag.saved
-                                : AyahTag.none),
+                                  ? AyahTag.saved
+                                  : AyahTag.none),
                         isBookmarked: provider.isBookmarked(ayahs[i]),
-                        onBookmarkTap: () =>
-                            provider.toggleBookmark(ayahs[i]),
+                        onBookmarkTap: () => provider.toggleBookmark(ayahs[i]),
                         onShareTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -453,9 +456,7 @@ class _QuranScreenState extends State<QuranScreen> {
                 left: 20.w,
                 right: 20.w,
                 bottom: 16.h,
-                child: QuranPlayer(
-                  surahName: surahTitle,
-                ),
+                child: QuranPlayer(surahName: surahTitle),
               ),
             ],
           );

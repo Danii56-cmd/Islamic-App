@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:provider/provider.dart';
-import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/providers/prayer_provider.dart';
 
 class PrayerList extends StatefulWidget {
@@ -63,12 +63,36 @@ class _PrayerListState extends State<PrayerList> {
                 };
               }).toList()
             : [
-                {"name": "Fajr", "time": "04:52 AM", "icon": Icons.wb_twilight_rounded},
-                {"name": "Sunrise", "time": "06:24 AM", "icon": Icons.wb_sunny_outlined},
-                {"name": "Dhuhr", "time": "01:15 PM", "icon": Icons.wb_sunny_rounded},
-                {"name": "Asr", "time": "04:58 PM", "icon": Icons.wb_sunny_outlined},
-                {"name": "Maghrib", "time": "08:04 PM", "icon": Icons.wb_twilight_rounded},
-                {"name": "Isha", "time": "09:28 PM", "icon": Icons.nightlight_outlined},
+                {
+                  "name": "Fajr",
+                  "time": "04:52 AM",
+                  "icon": Icons.wb_twilight_rounded,
+                },
+                {
+                  "name": "Sunrise",
+                  "time": "06:24 AM",
+                  "icon": Icons.wb_sunny_outlined,
+                },
+                {
+                  "name": "Dhuhr",
+                  "time": "01:15 PM",
+                  "icon": Icons.wb_sunny_rounded,
+                },
+                {
+                  "name": "Asr",
+                  "time": "04:58 PM",
+                  "icon": Icons.wb_sunny_outlined,
+                },
+                {
+                  "name": "Maghrib",
+                  "time": "08:04 PM",
+                  "icon": Icons.wb_twilight_rounded,
+                },
+                {
+                  "name": "Isha",
+                  "time": "09:28 PM",
+                  "icon": Icons.nightlight_outlined,
+                },
               ];
 
         return Column(
@@ -79,7 +103,8 @@ class _PrayerListState extends State<PrayerList> {
             final IconData icon = prayer["icon"] as IconData;
 
             final bool isActive =
-                name.toLowerCase() == (activePrayer.isEmpty ? "dhuhr" : activePrayer.toLowerCase());
+                name.toLowerCase() ==
+                (activePrayer.isEmpty ? "dhuhr" : activePrayer.toLowerCase());
             final bool isNotifOn = _notificationsEnabled.contains(name);
 
             return Padding(
@@ -88,11 +113,11 @@ class _PrayerListState extends State<PrayerList> {
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                 decoration: BoxDecoration(
-                  color: isActive ? AppColors.primary : AppColors.cardBackground,
+                  color: isActive ? context.primary : context.card,
                   borderRadius: BorderRadius.circular(18.r),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.shadow.withValues(alpha: 0.04),
+                      color: context.shadow.withValues(alpha: 0.04),
                       blurRadius: 6.r,
                       offset: Offset(0, 2.h),
                     ),
@@ -106,19 +131,18 @@ class _PrayerListState extends State<PrayerList> {
                       height: 44.r,
                       decoration: BoxDecoration(
                         color: isActive
-                            ? AppColors.primaryLight
-                            : AppColors.scaffoldBackground,
+                            ? context.primaryLight
+                            : context.background,
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: Icon(
                           icon,
                           size: 22.sp,
-                          color: isActive ? AppColors.accent : AppColors.textMuted,
+                          color: isActive ? context.accent : context.textMuted,
                         ),
                       ),
                     ),
-
                     SizedBox(width: 16.w),
 
                     // Prayer Name & Time
@@ -133,8 +157,8 @@ class _PrayerListState extends State<PrayerList> {
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w700,
                               color: isActive
-                                  ? AppColors.textOnPrimary
-                                  : AppColors.primary,
+                                  ? context.textOnPrimary
+                                  : context.primary,
                             ),
                           ),
                           SizedBox(height: 3.h),
@@ -143,8 +167,8 @@ class _PrayerListState extends State<PrayerList> {
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: isActive
-                                  ? AppColors.textOnPrimary
-                                  : AppColors.textSecondary,
+                                  ? context.textOnPrimary
+                                  : context.textSecondary,
                             ),
                           ),
                         ],
@@ -180,10 +204,10 @@ class _PrayerListState extends State<PrayerList> {
                               : Icons.notifications_off_outlined,
                           size: 20.sp,
                           color: isActive
-                              ? AppColors.accent
+                              ? context.accent
                               : (isNotifOn
-                                  ? AppColors.primary
-                                  : AppColors.textMuted),
+                                    ? context.primary
+                                    : context.textMuted),
                         ),
                       ),
                     ),

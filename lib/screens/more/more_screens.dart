@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/morescreen_widgets/help_about.dart';
 import 'package:islamic_app/widgets/morescreen_widgets/lang_card.dart';
@@ -18,7 +18,7 @@ class MoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: context.background,
       appBar: Appbar(),
 
       body: SingleChildScrollView(
@@ -90,7 +90,7 @@ class MoreScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 9.sp,
                 letterSpacing: 2.0,
-                color: AppColors.textMuted,
+                color: context.textMuted,
               ),
             ),
           ],

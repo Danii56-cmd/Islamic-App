@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:provider/provider.dart';
-import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/providers/location_provider.dart';
 import 'package:islamic_app/providers/prayer_provider.dart';
 import 'package:islamic_app/screens/qibla/qiblafinder_screen.dart';
@@ -27,7 +27,7 @@ class PrayersScreen extends StatelessWidget {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: context.background,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
@@ -44,7 +44,7 @@ class PrayersScreen extends StatelessWidget {
                     width: 40.w,
                     height: 4.h,
                     decoration: BoxDecoration(
-                      color: AppColors.textMuted.withValues(alpha: 0.3),
+                      color: context.textMuted.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(2.r),
                     ),
                   ),
@@ -55,16 +55,13 @@ class PrayersScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: context.textPrimary,
                   ),
                 ),
                 SizedBox(height: 4.h),
                 Text(
                   "Select the authority used to calculate daily prayer times.",
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textSecondary,
-                  ),
+                  style: TextStyle(fontSize: 12.sp, color: context.textMuted),
                 ),
                 SizedBox(height: 14.h),
                 Flexible(
@@ -98,12 +95,12 @@ class PrayersScreen extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppColors.accent.withValues(alpha: 0.15)
-                                : AppColors.cardBackground,
+                                ? context.accent.withValues(alpha: 0.15)
+                                : context.card,
                             borderRadius: BorderRadius.circular(14.r),
                             border: Border.all(
                               color: isSelected
-                                  ? AppColors.accent
+                                  ? context.accent
                                   : Colors.transparent,
                               width: 1.5,
                             ),
@@ -119,15 +116,15 @@ class PrayersScreen extends StatelessWidget {
                                         ? FontWeight.w700
                                         : FontWeight.w500,
                                     color: isSelected
-                                        ? AppColors.primary
-                                        : AppColors.textPrimary,
+                                        ? context.primary
+                                        : context.textPrimary,
                                   ),
                                 ),
                               ),
                               if (isSelected)
                                 Icon(
                                   Icons.check_circle_rounded,
-                                  color: AppColors.accent,
+                                  color: context.accent,
                                   size: 20.sp,
                                 ),
                             ],
@@ -152,7 +149,7 @@ class PrayersScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: context.background,
       appBar: const Appbar(),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -169,7 +166,7 @@ class PrayersScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
               ),
               SizedBox(height: 6.h),
@@ -194,7 +191,7 @@ class PrayersScreen extends StatelessWidget {
                               Icon(
                                 Icons.location_on_outlined,
                                 size: 14.sp,
-                                color: AppColors.textSecondary,
+                                color: context.textSecondary,
                               ),
                               SizedBox(width: 4.w),
                               Flexible(
@@ -203,7 +200,7 @@ class PrayersScreen extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w400,
-                                    color: AppColors.textSecondary,
+                                    color: context.textSecondary,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -226,12 +223,12 @@ class PrayersScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: context.textPrimary,
                             height: 1.2,
                           ),
                         ),
                         SizedBox(width: 8.w),
-                        Icon(Icons.tune, color: AppColors.primary, size: 20.sp),
+                        Icon(Icons.tune, color: context.primary, size: 20.sp),
                       ],
                     ),
                   ),
@@ -242,6 +239,7 @@ class PrayersScreen extends StatelessWidget {
               SizedBox(height: 10.h),
               // Qibla Direction Card - toggles Qibla finder view
               _infoCard(
+                context: context,
                 title: "Qibla Direction",
                 value: "142° SE",
                 icon: Icons.explore_outlined,
@@ -253,10 +251,12 @@ class PrayersScreen extends StatelessWidget {
               Consumer<PrayerProvider>(
                 builder: (context, prayerProvider, _) {
                   return _infoCard(
+                    context: context,
                     title: "Method",
                     value: prayerProvider.method.label,
                     icon: Icons.info_outline_rounded,
-                    color: AppColors.accent.withValues(alpha: 0.3),
+                    color: context.accent.withValues(alpha: 0.3),
+
                     onTap: () => _showCalculationMethodSheet(context),
                   );
                 },
@@ -275,6 +275,7 @@ class PrayersScreen extends StatelessWidget {
     required IconData icon,
     required VoidCallback onTap,
     Color? color,
+    required BuildContext context,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -282,11 +283,11 @@ class PrayersScreen extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
         decoration: BoxDecoration(
-          color: color ?? AppColors.cardBackground,
+          color: color ?? context.card,
           borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.shadow.withValues(alpha: 0.05),
+              color: context.shadow.withValues(alpha: 0.05),
               blurRadius: 6.r,
               offset: Offset(0, 2.h),
             ),
@@ -304,7 +305,7 @@ class PrayersScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: context.textPrimary,
                     ),
                   ),
                   SizedBox(height: 6.h),
@@ -313,7 +314,7 @@ class PrayersScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.textSecondary,
+                      color: context.textMuted,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -322,7 +323,7 @@ class PrayersScreen extends StatelessWidget {
               ),
             ),
             SizedBox(width: 10.w),
-            Icon(icon, size: 24.sp, color: AppColors.primary),
+            Icon(icon, size: 24.sp, color: context.primary),
           ],
         ),
       ),
@@ -360,11 +361,11 @@ class NextPrayerCard extends StatelessWidget {
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 22.h),
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: context.primary,
             borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
-                color: AppColors.shadow,
+                color: context.shadow,
                 blurRadius: 5.r,
                 offset: Offset(0, 2.h),
               ),
@@ -379,7 +380,7 @@ class NextPrayerCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.textMuted,
+                  color: context.textMuted,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -390,7 +391,7 @@ class NextPrayerCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 46.sp,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textOnPrimary,
+                    color: context.textOnPrimary,
                   ),
                   children: [
                     WidgetSpan(child: SizedBox(width: 5.w)),
@@ -399,7 +400,7 @@ class NextPrayerCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textOnPrimary,
+                        color: context.textOnPrimary,
                       ),
                     ),
                   ],
@@ -409,11 +410,11 @@ class NextPrayerCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: AppColors.accentLight.withValues(alpha: 0.3),
+                  color: context.accentLight,
                   borderRadius: BorderRadius.circular(20.r),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.shadow,
+                      color: context.shadow,
                       blurRadius: 5.r,
                       offset: Offset(0, 2.h),
                     ),
@@ -425,7 +426,7 @@ class NextPrayerCard extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.access_time_rounded,
-                      color: AppColors.accent,
+                      color: context.textOnPrimary,
                       size: 16.sp,
                     ),
                     SizedBox(width: 6.w),
@@ -434,7 +435,7 @@ class NextPrayerCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.accent,
+                        color: context.textOnPrimary,
                       ),
                     ),
                   ],

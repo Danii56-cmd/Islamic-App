@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 
 class CalendarDay extends StatelessWidget {
   final DateTime date;
@@ -55,10 +56,10 @@ class CalendarDay extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: isSelected
-                            ? AppColors.textPrimary
+                            ? context.textPrimary
                             : isFriday
-                            ? AppColors.primary
-                            : AppColors.textPrimary,
+                            ? context.primary
+                            : context.textPrimary,
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w700,
                         height: 0.2,
@@ -72,8 +73,8 @@ class CalendarDay extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: isSelected
-                            ? AppColors.textPrimary
-                            : AppColors.textSecondary,
+                            ? context.textPrimary
+                            : context.textSecondary,
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w500,
                         height: 1.0,
@@ -94,8 +95,8 @@ class CalendarDay extends StatelessWidget {
                   child: Container(
                     width: 4.w,
                     height: 4.w,
-                    decoration: const BoxDecoration(
-                      color: AppColors.textPrimary,
+                    decoration: BoxDecoration(
+                      color: context.textPrimary,
                       shape: BoxShape.circle,
                     ),
                   ),

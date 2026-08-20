@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
+// import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
@@ -8,16 +9,16 @@ class NotificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: context.background,
       appBar: AppBar(
-        backgroundColor: AppColors.scaffoldBackground,
+        backgroundColor: context.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             size: 18.sp,
-            color: AppColors.primary,
+            color: context.textPrimary,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -26,7 +27,7 @@ class NotificationScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
+            color: context.textPrimary,
           ),
         ),
       ),
@@ -40,7 +41,7 @@ class NotificationScreen extends StatelessWidget {
               Icon(
                 Icons.notifications_none_rounded,
                 size: 64.sp,
-                color: AppColors.textMuted,
+                color: context.textMuted,
               ),
               SizedBox(height: 16.h),
               Text(
@@ -48,17 +49,14 @@ class NotificationScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: context.textPrimary,
                 ),
               ),
               SizedBox(height: 6.h),
               Text(
                 "You're all caught up with your daily reminders.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 13.sp, color: context.textMuted),
               ),
             ],
           ),
