@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:provider/provider.dart';
-import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/providers/prayer_provider.dart';
 
 class UpcomingPrayer extends StatelessWidget {
@@ -43,11 +42,11 @@ class UpcomingPrayer extends StatelessWidget {
         return Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: context.primary,
             borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
-                color: AppColors.shadow,
+                color: context.shadow,
                 blurRadius: 10.r,
                 offset: Offset(0, 5.h),
               ),
@@ -70,7 +69,9 @@ class UpcomingPrayer extends StatelessWidget {
                             TextSpan(
                               text: "UPCOMING PRAYER\n",
                               style: TextStyle(
-                                color: AppColors.prayerCardText,
+                                color: context.textOnPrimary.withValues(
+                                  alpha: 0.7,
+                                ),
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
                                 letterSpacing: 1.2,
@@ -97,11 +98,11 @@ class UpcomingPrayer extends StatelessWidget {
                         vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.accent,
+                        color: context.accent,
                         borderRadius: BorderRadius.circular(20.r),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.shadow,
+                            color: context.shadow,
                             blurRadius: 10.r,
                             offset: Offset(0, 5.h),
                           ),
@@ -145,7 +146,7 @@ class UpcomingPrayer extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: isActive
-                              ? AppColors.accentLight
+                              ? context.accentLight
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(14.r),
                         ),
@@ -156,8 +157,10 @@ class UpcomingPrayer extends StatelessWidget {
                               name,
                               style: TextStyle(
                                 color: isActive
-                                    ? AppColors.accent
-                                    : AppColors.prayerCardText,
+                                    ? context.textOnPrimary
+                                    : context.textOnPrimary.withValues(
+                                        alpha: 0.5,
+                                      ),
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -167,7 +170,7 @@ class UpcomingPrayer extends StatelessWidget {
                               time,
                               style: TextStyle(
                                 color: isActive
-                                    ? context.accent
+                                    ? context.textOnPrimary
                                     : context.textOnPrimary,
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w600,

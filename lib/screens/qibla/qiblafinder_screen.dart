@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_compass_v2/flutter_compass_v2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/custom_pop_scope.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_compass.dart';
@@ -157,7 +158,7 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF9FAFA),
+        backgroundColor: context.background,
         appBar: const Appbar(),
         body: SafeArea(
           child: Column(
@@ -181,7 +182,7 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
                           child: Icon(
                             Icons.arrow_back_ios_new_rounded,
                             size: 16.sp,
-                            color: const Color(0xFF003831),
+                            color: context.icon,
                           ),
                         ),
                       ),

@@ -7,7 +7,10 @@ import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/core/appconstants.dart';
 import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/models/dua_model.dart';
+import 'package:islamic_app/models/favourites_model.dart';
 import 'package:islamic_app/providers/duas_provider.dart';
+import 'package:islamic_app/providers/favourites_provider.dart';
+import 'package:islamic_app/screens/favourites/favourites_screen.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 
 // FEATURED CATEGORY DATA
@@ -77,7 +80,7 @@ class _DuasScreenState extends State<DuasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.background,
-      appBar: const Appbar(),
+      appBar: Appbar(), // Placeholder for Appbar
       body: Consumer<DuasProvider>(
         builder: (context, provider, _) {
           final isLoading = provider.status == DuasLoadStatus.loading;
@@ -208,11 +211,25 @@ class _DuasScreenState extends State<DuasScreen> {
                               20.w,
                               0,
                             ),
-                            child: _DuaCard(
-                              dua: dua,
-                              isFavorite: provider.isFavorite(dua),
-                              onToggleFavorite: () {
-                                provider.toggleFavorite(dua);
+                            child: Consumer<FavoritesProvider>(
+                              builder: (context, favorites, _) {
+                                final isFav = favorites.isDuaFavorite(dua.id);
+                                return _DuaCard(
+                                  dua: dua,
+                                  isFavorite: isFav,
+                                  onToggleFavorite: () {
+                                    favorites.toggleDuaFavorite(
+                                      FavoriteDua(
+                                        id: dua.id,
+                                        title: dua.title,
+                                        arabic: dua.arabicText,
+                                        translation: dua.translation,
+                                        category: dua.category,
+                                        reference: dua.reference,
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                             ),
                           );
@@ -253,25 +270,79 @@ class _ScreenHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // BACK BUTTON
-          if (onBack != null) ...[
-            GestureDetector(
-              onTap: onBack,
-              child: Container(
-                padding: EdgeInsets.all(9.r),
-                decoration: BoxDecoration(
-                  color: context.iconBackground,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: 16.sp,
-                  color: context.primary,
+          // TOP ROW: BACK BUTTON & FAVOURITES SHORTCUT
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (onBack != null)
+                GestureDetector(
+                  onTap: onBack,
+                  child: Container(
+                    padding: EdgeInsets.all(9.r),
+                    decoration: BoxDecoration(
+                      color: context.iconBackground,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 16.sp,
+                      color: context.primary,
+                    ),
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const FavouritesScreen(
+                        initialTabIndex: 1,
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: context.card,
+                    borderRadius: BorderRadius.circular(20.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: context.shadow,
+                        blurRadius: 4.r,
+                        offset: Offset(0, 1.h),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.bookmark_outline,
+                        size: 15.sp,
+                        color: context.primary,
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Favourites',
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w600,
+                          color: context.primary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 14.h),
-          ],
+            ],
+          ),
+          SizedBox(height: 14.h),
 
           // TITLE
           const HeaderText(text: 'Duas & Supplications'),

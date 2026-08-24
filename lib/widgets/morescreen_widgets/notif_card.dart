@@ -15,7 +15,7 @@ class _NotificationCardState extends State<NotificationCard> {
   @override
   Widget build(BuildContext context) {
     return MyCard(
-      backgroundColor: context.textMuted.withValues(alpha: 0.1),
+      backgroundColor: context.textMuted.withValues(alpha: 0.3),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

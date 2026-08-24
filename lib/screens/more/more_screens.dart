@@ -20,7 +20,6 @@ class MoreScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: context.background,
       appBar: Appbar(),
-
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 30.h),

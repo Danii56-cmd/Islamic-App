@@ -17,7 +17,9 @@ class ThemeCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
       decoration: BoxDecoration(
-        color: context.textMuted.withValues(alpha: 0.1),
+        color: isDarkMode
+            ? context.textMuted.withValues(alpha: 0.1)
+            : context.background,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(

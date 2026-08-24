@@ -4,7 +4,7 @@ import 'package:islamic_app/core/theme_extensions.dart';
 
 enum AyahTag { highlight, saved, none }
 
-class AyahCard extends StatefulWidget {
+class AyahCard extends StatelessWidget {
   const AyahCard({
     super.key,
     required this.ayahNumber,
@@ -24,29 +24,8 @@ class AyahCard extends StatefulWidget {
   final VoidCallback? onBookmarkTap;
   final VoidCallback? onShareTap;
 
-  @override
-  State<AyahCard> createState() => _AyahCardState();
-}
-
-class _AyahCardState extends State<AyahCard> {
-  late bool _bookmarked;
-
-  @override
-  void initState() {
-    super.initState();
-    _bookmarked = widget.isBookmarked;
-  }
-
-  @override
-  void didUpdateWidget(covariant AyahCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.isBookmarked != widget.isBookmarked) {
-      _bookmarked = widget.isBookmarked;
-    }
-  }
-
-  Color get _tagColor {
-    switch (widget.tag) {
+  Color _tagColor(BuildContext context) {
+    switch (tag) {
       case AyahTag.saved:
         return context.accent;
       case AyahTag.highlight:
@@ -57,7 +36,7 @@ class _AyahCardState extends State<AyahCard> {
   }
 
   String get _tagLabel {
-    switch (widget.tag) {
+    switch (tag) {
       case AyahTag.saved:
         return 'SAVED';
       case AyahTag.highlight:
@@ -86,31 +65,27 @@ class _AyahCardState extends State<AyahCard> {
         padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 20.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
           children: [
+            // TOP ROW
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _AyahNumberBadge(number: widget.ayahNumber),
+                _AyahNumberBadge(number: ayahNumber),
                 SizedBox(width: 14.w),
+
+                // BOOKMARK
                 GestureDetector(
-                  onTap: () {
-                    if (widget.onBookmarkTap != null) {
-                      widget.onBookmarkTap!();
-                    } else {
-                      setState(() => _bookmarked = !_bookmarked);
-                    }
-                  },
+                  onTap: onBookmarkTap,
                   child: Icon(
-                    _bookmarked ? Icons.bookmark : Icons.bookmark_outline,
+                    isBookmarked ? Icons.bookmark : Icons.bookmark_outline,
                     size: 20.sp,
-                    color: _bookmarked ? context.primary : context.textMuted,
+                    color: isBookmarked ? context.primary : context.textMuted,
                   ),
                 ),
                 SizedBox(width: 14.w),
-                // Share icon
+
+                // SHARE
                 GestureDetector(
-                  onTap: widget.onShareTap,
+                  onTap: onShareTap,
                   child: Icon(
                     Icons.share_outlined,
                     size: 20.sp,
@@ -118,39 +93,42 @@ class _AyahCardState extends State<AyahCard> {
                   ),
                 ),
                 const Spacer(),
-                // Tag label
-                if (widget.tag != AyahTag.none)
+                // TAG
+                if (tag != AyahTag.none)
                   Text(
                     _tagLabel,
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w700,
-                      color: _tagColor,
+                      color: _tagColor(context),
                       letterSpacing: 1,
                     ),
                   ),
               ],
             ),
             SizedBox(height: 18.h),
+
+            // ARABIC
             Text(
-              widget.arabicText,
+              arabicText,
+              textAlign: TextAlign.right,
+              textDirection: TextDirection.rtl,
               style: TextStyle(
                 fontSize: 26.sp,
                 color: context.textPrimary,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Amiri',
-                height: 2.0,
+                height: 2,
               ),
-              textAlign: TextAlign.right,
-              textDirection: TextDirection.rtl,
             ),
             SizedBox(height: 16.h),
+
+            // TRANSLATION
             Text(
-              widget.translation,
+              translation,
               style: TextStyle(
                 fontSize: 13.5.sp,
                 color: context.textSecondary,
-                fontWeight: FontWeight.w400,
                 height: 1.6,
               ),
             ),
@@ -159,10 +137,6 @@ class _AyahCardState extends State<AyahCard> {
       ),
     );
   }
-}
-
-extension on BuildContext {
-  Color? get cardBackground => null;
 }
 
 class _AyahNumberBadge extends StatelessWidget {
@@ -175,8 +149,8 @@ class _AyahNumberBadge extends StatelessWidget {
       width: 36.r,
       height: 36.r,
       decoration: BoxDecoration(
-        color: context.textMuted.withValues(alpha: 0.10),
         shape: BoxShape.circle,
+        color: context.textMuted.withValues(alpha: 0.10),
       ),
       alignment: Alignment.center,
       child: Text(

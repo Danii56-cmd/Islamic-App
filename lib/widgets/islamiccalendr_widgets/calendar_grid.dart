@@ -87,7 +87,7 @@ class CalendarGrid extends StatelessWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(18.w, 20.h, 18.w, 18.h),
       decoration: BoxDecoration(
-        color: context.cardBackground,
+        color: context.card,
         borderRadius: BorderRadius.circular(17.r),
         boxShadow: [
           BoxShadow(
@@ -175,10 +175,6 @@ class CalendarGrid extends StatelessWidget {
       ),
     );
   }
-}
-
-extension on BuildContext {
-  Color? get cardBackground => null;
 }
 
 class _WeekDay extends StatelessWidget {

@@ -27,7 +27,7 @@ class MoreOptionTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: context.primaryDark, size: 22.sp),
+            Icon(icon, color: context.primary, size: 22.sp),
             SizedBox(width: 14.w),
             Expanded(
               child: Text(
@@ -40,7 +40,11 @@ class MoreOptionTile extends StatelessWidget {
               ),
             ),
             SizedBox(width: 8.w),
-            Icon(Icons.chevron_right, color: context.textMuted, size: 20.sp),
+            Icon(
+              Icons.chevron_right,
+              color: context.textMuted.withValues(alpha: 0.9),
+              size: 20.sp,
+            ),
           ],
         ),
       ),

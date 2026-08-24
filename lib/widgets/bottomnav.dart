@@ -15,7 +15,7 @@ class BottomNav extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 8.h),
         decoration: BoxDecoration(
-          color: context.textMuted.withValues(alpha: 0.1),
+          color: context.card,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20.r),
             topRight: Radius.circular(20.r),

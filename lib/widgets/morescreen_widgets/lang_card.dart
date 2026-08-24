@@ -9,7 +9,7 @@ class LanguageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyCard(
-      backgroundColor: context.textMuted.withValues(alpha: 0.1),
+      backgroundColor: context.textMuted.withValues(alpha: 0.3),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,

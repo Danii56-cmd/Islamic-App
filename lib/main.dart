@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/app_theme.dart';
 import 'package:islamic_app/providers/duas_provider.dart';
+import 'package:islamic_app/providers/favourites_provider.dart';
 import 'package:islamic_app/providers/fontsize_provider.dart';
 import 'package:islamic_app/providers/location_provider.dart';
 import 'package:islamic_app/providers/prayer_provider.dart';
@@ -64,6 +65,8 @@ class MyApp extends StatelessWidget {
 
         // FONT SIZE
         ChangeNotifierProvider.value(value: fontSizeProvider),
+        // FAVOURITES AYAH AND DUAAS
+        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
       ],
 
       child: ScreenUtilInit(

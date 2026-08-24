@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/providers/fontsize_provider.dart';
+import 'package:islamic_app/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:islamic_app/widgets/morescreen_widgets/reusable_card.dart';
 
@@ -12,9 +13,13 @@ class ReaderCustomizationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final fontProvider = context.watch<FontSizeProvider>();
     final currentSize = fontProvider.fontSize;
+    final themeProvider = context.watch<ThemeChangerProvider>();
+    final isDarkMode = themeProvider.isDarkMode;
 
     return MyCard(
-      backgroundColor: context.textMuted.withValues(alpha: 0.1),
+      backgroundColor: isDarkMode
+          ? context.textMuted.withValues(alpha: 0.1)
+          : context.background,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,

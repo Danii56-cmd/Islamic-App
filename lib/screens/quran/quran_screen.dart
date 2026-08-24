@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/theme_extensions.dart';
-import 'package:provider/provider.dart';
 import 'package:islamic_app/core/appcolors.dart';
+import 'package:islamic_app/core/theme_extensions.dart';
+import 'package:islamic_app/models/favourites_model.dart';
+import 'package:islamic_app/providers/favourites_provider.dart';
 import 'package:islamic_app/providers/quran_provider.dart';
+import 'package:islamic_app/screens/favourites/favourites_screen.dart';
 import 'package:islamic_app/screens/quran/duas_suplications_screen.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/header_text.dart';
 import 'package:islamic_app/widgets/quran_widgets/ayah_card.dart';
 import 'package:islamic_app/widgets/quran_widgets/quran_player.dart';
+import 'package:provider/provider.dart';
 
 class QuranScreen extends StatefulWidget {
   final bool showDuas;
@@ -19,7 +22,6 @@ class QuranScreen extends StatefulWidget {
     required this.showDuas,
     required this.onCloseDuas,
   });
-
   @override
   State<QuranScreen> createState() => _QuranScreenState();
 }
@@ -27,12 +29,18 @@ class QuranScreen extends StatefulWidget {
 class _QuranScreenState extends State<QuranScreen> {
   final TextEditingController _searchController = TextEditingController();
 
+  // Currently selected/playing Ayah.
+  int? _selectedAyahNumber;
+  // Currently selected Surah.
+  int? _selectedSurahNumber;
+
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 
+  // SURAH PICKER
   void _showSurahPicker(BuildContext context, QuranProvider provider) {
     showModalBottomSheet(
       context: context,
@@ -58,6 +66,7 @@ class _QuranScreenState extends State<QuranScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Drag handle
                       Center(
                         child: Container(
                           width: 40.w,
@@ -69,11 +78,13 @@ class _QuranScreenState extends State<QuranScreen> {
                         ),
                       ),
                       SizedBox(height: 16.h),
+
+                      // Header
                       Row(
                         children: [
                           Expanded(
                             child: Text(
-                              "Select Surah",
+                              'Select Surah',
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w700,
@@ -82,7 +93,7 @@ class _QuranScreenState extends State<QuranScreen> {
                             ),
                           ),
                           Text(
-                            "${provider.allSurahs.length} Surahs",
+                            '${provider.allSurahs.length} Surahs',
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
@@ -92,7 +103,8 @@ class _QuranScreenState extends State<QuranScreen> {
                         ],
                       ),
                       SizedBox(height: 14.h),
-                      // Search inside modal
+
+                      // Search
                       TextField(
                         style: TextStyle(
                           fontSize: 13.sp,
@@ -117,13 +129,15 @@ class _QuranScreenState extends State<QuranScreen> {
                             borderSide: BorderSide.none,
                           ),
                         ),
-                        onChanged: (q) {
+                        onChanged: (query) {
                           setModalState(() {
-                            provider.searchSurahs(q);
+                            provider.searchSurahs(query);
                           });
                         },
                       ),
                       SizedBox(height: 14.h),
+
+                      // Surah list
                       Expanded(
                         child: ListView.separated(
                           controller: scrollController,
@@ -131,13 +145,20 @@ class _QuranScreenState extends State<QuranScreen> {
                           itemCount: provider.filteredSurahs.length,
                           separatorBuilder: (_, __) => SizedBox(height: 8.h),
                           itemBuilder: (context, index) {
-                            final surah = provider.filteredSurahs[index];
+                            final selectedSurah =
+                                provider.filteredSurahs[index];
                             final isSelected =
-                                provider.currentSurah?.number == surah.number;
-
+                                provider.currentSurah?.number ==
+                                selectedSurah.number;
                             return InkWell(
                               onTap: () {
-                                provider.fetchSurah(surah.number);
+                                // Clear selected Ayah because
+                                // the user is changing Surah.
+                                setState(() {
+                                  _selectedAyahNumber = null;
+                                  _selectedSurahNumber = selectedSurah.number;
+                                });
+                                provider.fetchSurah(selectedSurah.number);
                                 Navigator.pop(ctx);
                               },
                               borderRadius: BorderRadius.circular(14.r),
@@ -160,6 +181,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                 ),
                                 child: Row(
                                   children: [
+                                    // Number
                                     Container(
                                       width: 34.r,
                                       height: 34.r,
@@ -171,7 +193,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
-                                        '${surah.number}',
+                                        '${selectedSurah.number}',
                                         style: TextStyle(
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w700,
@@ -180,13 +202,15 @@ class _QuranScreenState extends State<QuranScreen> {
                                       ),
                                     ),
                                     SizedBox(width: 14.w),
+
+                                    // English information
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            surah.englishName,
+                                            selectedSurah.englishName,
                                             style: TextStyle(
                                               fontSize: 14.sp,
                                               fontWeight: FontWeight.w700,
@@ -195,7 +219,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                           ),
                                           SizedBox(height: 2.h),
                                           Text(
-                                            '${surah.englishNameTranslation} • ${surah.numberOfAyahs} Verses',
+                                            '${selectedSurah.englishNameTranslation} • ${selectedSurah.numberOfAyahs} Verses',
                                             style: TextStyle(
                                               fontSize: 11.sp,
                                               color: context.textSecondary,
@@ -204,8 +228,9 @@ class _QuranScreenState extends State<QuranScreen> {
                                         ],
                                       ),
                                     ),
+                                    // Arabic name
                                     Text(
-                                      surah.name,
+                                      selectedSurah.name,
                                       style: TextStyle(
                                         fontSize: 18.sp,
                                         fontWeight: FontWeight.bold,
@@ -232,8 +257,18 @@ class _QuranScreenState extends State<QuranScreen> {
     );
   }
 
+  // AYAH SELECTION
+  void _selectAyah({required int surahNumber, required int ayahNumber}) {
+    setState(() {
+      _selectedSurahNumber = surahNumber;
+      _selectedAyahNumber = ayahNumber;
+    });
+  }
+
+  // BUILD
   @override
   Widget build(BuildContext context) {
+    // Show Duas screen when requested.
     if (widget.showDuas) {
       return DuasScreen(onBack: widget.onCloseDuas);
     }
@@ -250,25 +285,26 @@ class _QuranScreenState extends State<QuranScreen> {
           final surahSubtitle = surah != null
               ? surah.subtitle
               : 'The Cave  •  110 Verses  •  Meccan';
-
           final isLoading = provider.ayahsStatus == QuranLoadStatus.loading;
           final isError = provider.ayahsStatus == QuranLoadStatus.error;
           final ayahs = provider.currentAyahs;
+          final currentSurahNumber = surah?.number ?? 18;
+          final currentSurahName = surah?.englishName ?? 'Al-Kahf';
 
           return Stack(
             children: [
+              // MAIN QURAN CONTENT
               ListView(
                 physics: const BouncingScrollPhysics(),
                 padding: EdgeInsets.only(
                   left: 20.w,
                   right: 20.w,
                   top: 0,
-                  bottom: 130.h,
+                  bottom: 150.h,
                 ),
                 children: [
                   SizedBox(height: 18.h),
-
-                  // Current reading label & Surah selector icon
+                  // CURRENT READING
                   Row(
                     children: [
                       Flexible(
@@ -285,7 +321,41 @@ class _QuranScreenState extends State<QuranScreen> {
                       ),
                       const Spacer(),
                       GestureDetector(
-                        onTap: () => _showSurahPicker(context, provider),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const FavouritesScreen(
+                                initialTabIndex: 0,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.bookmark_outline,
+                              size: 15.sp,
+                              color: AppColors.primary,
+                            ),
+                            SizedBox(width: 3.w),
+                            Text(
+                              'Favourites',
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      GestureDetector(
+                        onTap: () {
+                          _showSurahPicker(context, provider);
+                        },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -309,12 +379,10 @@ class _QuranScreenState extends State<QuranScreen> {
                     ],
                   ),
                   SizedBox(height: 8.h),
-
-                  // Surah title
+                  // SURAH TITLE
                   HeaderText(text: surahTitle),
                   SizedBox(height: 6.h),
-
-                  // Subtitle
+                  // SURAH SUBTITLE
                   Text(
                     surahSubtitle,
                     style: TextStyle(
@@ -324,10 +392,11 @@ class _QuranScreenState extends State<QuranScreen> {
                     ),
                   ),
                   SizedBox(height: 14.h),
-
-                  // Search field
+                  // SEARCH
                   GestureDetector(
-                    onTap: () => _showSurahPicker(context, provider),
+                    onTap: () {
+                      _showSurahPicker(context, provider);
+                    },
                     child: AbsorbPointer(
                       child: TextFormField(
                         controller: _searchController,
@@ -369,8 +438,7 @@ class _QuranScreenState extends State<QuranScreen> {
                     ),
                   ),
                   SizedBox(height: 20.h),
-
-                  // Loading State
+                  // LOADING
                   if (isLoading)
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 40.h),
@@ -380,6 +448,7 @@ class _QuranScreenState extends State<QuranScreen> {
                         ),
                       ),
                     )
+                  // ERROR
                   else if (isError)
                     Container(
                       padding: EdgeInsets.all(20.w),
@@ -411,8 +480,9 @@ class _QuranScreenState extends State<QuranScreen> {
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                             ),
-                            onPressed: () =>
-                                provider.fetchSurah(surah?.number ?? 18),
+                            onPressed: () {
+                              provider.fetchSurah(currentSurahNumber);
+                            },
                             child: const Text(
                               'Retry',
                               style: TextStyle(color: Colors.white),
@@ -421,42 +491,104 @@ class _QuranScreenState extends State<QuranScreen> {
                         ],
                       ),
                     )
+                  // AYAH LIST
+                  else if (ayahs.isEmpty)
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 40.h),
+                      child: Center(
+                        child: Text(
+                          'No verses available.',
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            color: context.textSecondary,
+                          ),
+                        ),
+                      ),
+                    )
                   else
-                    // Ayah cards
-                    for (int i = 0; i < ayahs.length; i++) ...[
-                      AyahCard(
-                        ayahNumber: ayahs[i].numberInSurah,
-                        arabicText: ayahs[i].arabicText,
-                        translation: ayahs[i].translation,
-                        tag: i == 0
-                            ? AyahTag.highlight
-                            : (provider.isBookmarked(ayahs[i])
-                                  ? AyahTag.saved
-                                  : AyahTag.none),
-                        isBookmarked: provider.isBookmarked(ayahs[i]),
-                        onBookmarkTap: () => provider.toggleBookmark(ayahs[i]),
-                        onShareTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              duration: const Duration(seconds: 1),
-                              content: Text(
-                                'Ayah ${ayahs[i].numberInSurah} copied to clipboard',
+                    ...ayahs.map((ayah) {
+                      final isSelected =
+                          _selectedSurahNumber == currentSurahNumber &&
+                          _selectedAyahNumber == ayah.numberInSurah;
+                      return Column(
+                        children: [
+                          // AYAH CARD
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {
+                              _selectAyah(
+                                surahNumber: currentSurahNumber,
+                                ayahNumber: ayah.numberInSurah,
+                              );
+                            },
+                            child: Consumer<FavoritesProvider>(
+                              builder: (context, favorites, child) {
+                                final isFavorite = favorites.isAyahFavorite(
+                                  surahNumber: currentSurahNumber,
+                                  ayahNumber: ayah.numberInSurah,
+                                );
+                                return AyahCard(
+                                  ayahNumber: ayah.numberInSurah,
+                                  arabicText: ayah.arabicText,
+                                  translation: ayah.translation,
+                                  isBookmarked: isFavorite,
+                                  onBookmarkTap: () {
+                                    favorites.toggleAyahFavorite(
+                                      FavoriteAyah(
+                                        surahNumber: currentSurahNumber,
+                                        surahName: currentSurahName,
+                                        ayahNumber: ayah.numberInSurah,
+                                        arabic: ayah.arabicText,
+                                        translation: ayah.translation,
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+
+                          // SELECTED AYAH INDICATOR
+                          if (isSelected)
+                            Padding(
+                              padding: EdgeInsets.only(top: 6.h),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.graphic_eq_rounded,
+                                    size: 14.sp,
+                                    color: context.accent,
+                                  ),
+                                  SizedBox(width: 5.w),
+                                  Text(
+                                    'Selected Ayah ${ayah.numberInSurah}',
+                                    style: TextStyle(
+                                      fontSize: 10.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: context.accent,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ),
-                      SizedBox(height: 18.h),
-                    ],
+                          SizedBox(height: 18.h),
+                        ],
+                      );
+                    }),
                 ],
               ),
-
-              // Floating player
+              // FLOATING QURAN PLAYER
               Positioned(
                 left: 20.w,
                 right: 20.w,
                 bottom: 16.h,
-                child: QuranPlayer(surahName: surahTitle),
+                child: QuranPlayer(
+                  surahName: surahTitle,
+                  // This is the Ayah selected by the user.
+                  ayahNumber: _selectedAyahNumber,
+                  reciterName: 'Mishary Rashid Alafasy',
+                ),
               ),
             ],
           );

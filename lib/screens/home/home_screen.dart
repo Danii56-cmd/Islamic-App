@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/appcolors.dart';
 import 'package:islamic_app/core/appconstants.dart';
 import 'package:islamic_app/core/theme_extensions.dart';
 import 'package:islamic_app/screens/calendar/islamiccalendar_screen.dart';
@@ -36,7 +35,7 @@ class HomeScreen extends StatelessWidget {
       body: showCalendar
           ? IslamicCalendarScreen(onBack: onCloseCalendar)
           : Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              padding: EdgeInsets.symmetric(horizontal: 25.w),
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(
@@ -62,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20.r),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.shadow,
+                            color: context.shadow,
                             blurRadius: 5.r,
                             offset: Offset(0, 2.h),
                           ),
@@ -202,7 +201,7 @@ class JournalContainer extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: context.shadow,
             blurRadius: 10.r,
             offset: Offset(0, 4.h),
           ),
@@ -217,7 +216,7 @@ class JournalContainer extends StatelessWidget {
             end: Alignment.bottomCenter,
             colors: [
               Colors.black.withValues(alpha: 0.15),
-              AppColors.prayerCardActiveBg.withValues(alpha: 0.85),
+              context.prayerCardActiveBg.withValues(alpha: 0.85),
             ],
             stops: const [0.1, 1.0],
           ),
@@ -231,7 +230,7 @@ class JournalContainer extends StatelessWidget {
               style: TextStyle(
                 fontSize: 10.sp,
                 fontWeight: FontWeight.bold,
-                color: AppColors.accent,
+                color: context.accent,
                 letterSpacing: 1.sp,
               ),
             ),
@@ -275,7 +274,7 @@ Widget _featureCard({
         borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: context.shadow,
             blurRadius: 5.r,
             offset: Offset(0, 2.h),
           ),
@@ -294,7 +293,7 @@ Widget _featureCard({
                 color: context.iconBackground,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: AppColors.primary, size: 20.sp),
+              child: Icon(icon, color: context.primary, size: 20.sp),
             ),
             SizedBox(height: 6.h),
             Flexible(

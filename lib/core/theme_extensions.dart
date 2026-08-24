@@ -10,7 +10,7 @@ extension AppThemeExtension on BuildContext {
   // BACKGROUNDS
 
   Color get background => theme.scaffoldBackgroundColor;
-  Color get card => theme.cardColor;
+  Color get card => isDark ? textMuted.withValues(alpha: 0.1) : background;
   Color get surface => theme.colorScheme.surface;
   Color get iconBackground =>
       isDark ? AppColors.darkIconBackground : AppColors.lightIconBackground;

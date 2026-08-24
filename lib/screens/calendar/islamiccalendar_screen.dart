@@ -52,9 +52,9 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
       onBackPressed: () {
         if (widget.onBack != null) {
           widget.onBack!();
-          return true; // Indicate that the back press was handled
+          return true;
         }
-        return false; // Allow default back behavior
+        return false;
       },
       child: Scaffold(
         backgroundColor: context.background,
@@ -70,40 +70,24 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                 // Back Button + Title
                 Row(
                   children: [
-                    if (widget.onBack != null) ...[
-                      InkWell(
-                        onTap: widget.onBack,
-                        borderRadius: BorderRadius.circular(20.r),
-                        child: Container(
-                          padding: EdgeInsets.all(10.w),
-                          decoration: BoxDecoration(
-                            color: context.textPrimary,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 16.sp,
-                            color: context.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ],
-
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'Islamic Calendar',
-                          style: TextStyle(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w700,
-                            color: context.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // Keeps title centered
-                    if (widget.onBack != null) SizedBox(width: 36.w),
+                    // if (widget.onBack != null) ...[
+                    //   InkWell(
+                    //     onTap: widget.onBack,
+                    //     borderRadius: BorderRadius.circular(20.r),
+                    //     child: Container(
+                    //       padding: EdgeInsets.all(10.w),
+                    //       decoration: BoxDecoration(
+                    //         color: Color(0xFFF2F4F3),
+                    //         shape: BoxShape.circle,
+                    //       ),
+                    //       child: Icon(
+                    //         Icons.arrow_back_ios_new_rounded,
+                    //         size: 16.sp,
+                    //         color: context.textPrimary,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ],
                   ],
                 ),
                 SizedBox(height: 20.h),

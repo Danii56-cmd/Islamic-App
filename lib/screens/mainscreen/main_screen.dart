@@ -6,6 +6,9 @@ import 'package:islamic_app/screens/quran/quran_screen.dart';
 import 'package:islamic_app/widgets/bottomnav.dart';
 import 'package:islamic_app/widgets/custom_pop_scope.dart';
 
+/// Global callback used by the common AppBar
+VoidCallback? openMoreTab;
+
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -19,13 +22,16 @@ class _MainScreenState extends State<MainScreen> {
   bool _quranShowDuas = false;
   bool _homeShowCalendar = false;
 
-  // Key to control the More tab's own internal Navigator (if it has nested pushes)
+  // Key to control More tab's internal Navigator
   final GlobalKey<NavigatorState> _moreNavigatorKey =
       GlobalKey<NavigatorState>();
 
   void _goToTab(int index) {
     if (index < 0 || index > 3) return;
-    setState(() => _currentIndex = index);
+
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   void _openCalendarOnHomeTab() {
@@ -50,47 +56,70 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _openMoreTab() {
-    setState(() => _currentIndex = 3);
+    setState(() {
+      _currentIndex = 3;
+    });
   }
 
-  void _closeCalendar() => setState(() => _homeShowCalendar = false);
-  void _closeQibla() => setState(() => _prayerShowQibla = false);
-  void _closeDuas() => setState(() => _quranShowDuas = false);
+  void _closeCalendar() {
+    setState(() {
+      _homeShowCalendar = false;
+    });
+  }
+
+  void _closeQibla() {
+    setState(() {
+      _prayerShowQibla = false;
+    });
+  }
+
+  void _closeDuas() {
+    setState(() {
+      _quranShowDuas = false;
+    });
+  }
 
   bool _onBackPressed() {
-    // 1. A nested sub-view is open on the current tab -> close just that.
+    // 1. Close nested Home view
     if (_homeShowCalendar) {
       _closeCalendar();
       return true;
     }
+
+    // 2. Close nested Qibla view
     if (_prayerShowQibla) {
       _closeQibla();
       return true;
     }
+
+    // 3. Close nested Duas view
     if (_quranShowDuas) {
       _closeDuas();
       return true;
     }
 
-    // 2. More tab has its own pushed nested screen -> pop just that.
+    // 4. Pop More's nested screen
     if (_currentIndex == 3 &&
         (_moreNavigatorKey.currentState?.canPop() ?? false)) {
       _moreNavigatorKey.currentState!.pop();
       return true;
     }
 
-    // 3. We're on a non-home tab with nothing nested open -> jump to Home.
+    // 5. Go back to Home
     if (_currentIndex != 0) {
       _goToTab(0);
       return true;
     }
 
-    // 4. We're on Home tab, nothing open -> let CustomPopScope show exit dialog.
+    // 6. Let CustomPopScope handle exit
     return false;
   }
 
   @override
   Widget build(BuildContext context) {
+    // Register the AppBar's Settings action
+    openMoreTab = _openMoreTab;
+
     final List<Widget> screens = [
       HomeScreen(
         showCalendar: _homeShowCalendar,
@@ -99,15 +128,17 @@ class _MainScreenState extends State<MainScreen> {
         onOpenCalendar: _openCalendarOnHomeTab,
         onOpenQibla: _openQiblaOnPrayerTab,
         onOpenDuas: _openDuasOnQuranTab,
-        onOpenMore: _openMoreTab,
       ),
+
       QuranScreen(showDuas: _quranShowDuas, onCloseDuas: _closeDuas),
+
       PrayersScreen(
         showQibla: _prayerShowQibla,
         onOpenQibla: _openQiblaOnPrayerTab,
         onCloseQibla: _closeQibla,
       ),
-      MoreScreen(navigatorKey: _moreNavigatorKey), // see note below
+
+      MoreScreen(navigatorKey: _moreNavigatorKey),
     ];
 
     return CustomPopScope(
@@ -115,6 +146,7 @@ class _MainScreenState extends State<MainScreen> {
       onBackPressed: _onBackPressed,
       child: Scaffold(
         body: IndexedStack(index: _currentIndex, children: screens),
+
         bottomNavigationBar: BottomNav(
           currentIndex: _currentIndex,
           onTap: _goToTab,

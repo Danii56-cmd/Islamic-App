@@ -7,11 +7,13 @@ class QuranPlayer extends StatefulWidget {
     super.key,
     this.surahName = 'Surah Al-Kahf',
     this.reciterName = 'Mishary Rashid Alafasy',
+    this.ayahNumber,
+    this.onPlayPause,
   });
-
   final String surahName;
   final String reciterName;
-
+  final int? ayahNumber;
+  final VoidCallback? onPlayPause;
   @override
   State<QuranPlayer> createState() => _QuranPlayerState();
 }
@@ -19,7 +21,7 @@ class QuranPlayer extends StatefulWidget {
 class _QuranPlayerState extends State<QuranPlayer>
     with SingleTickerProviderStateMixin {
   bool _isPlaying = false;
-  double _progress = 0.32;
+  double _progress = 0.0;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
@@ -30,10 +32,22 @@ class _QuranPlayerState extends State<QuranPlayer>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     )..repeat(reverse: true);
-
     _pulseAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+  }
+
+  @override
+  void didUpdateWidget(covariant QuranPlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.ayahNumber != widget.ayahNumber ||
+        oldWidget.surahName != widget.surahName) {
+      setState(() {
+        _progress = 0.0;
+        _isPlaying = false;
+      });
+    }
   }
 
   @override
@@ -48,7 +62,15 @@ class _QuranPlayerState extends State<QuranPlayer>
     final display = remaining ? totalSeconds - elapsed : elapsed;
     final m = display ~/ 60;
     final s = display % 60;
-    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+    return '${m.toString().padLeft(2, '0')}:'
+        '${s.toString().padLeft(2, '0')}';
+  }
+
+  void _togglePlay() {
+    setState(() {
+      _isPlaying = !_isPlaying;
+    });
+    widget.onPlayPause?.call();
   }
 
   @override
@@ -69,10 +91,9 @@ class _QuranPlayerState extends State<QuranPlayer>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Surah info
+          // SURAH + AYAH INFO
           Row(
             children: [
-              // Icon thumbnail
               Container(
                 width: 44.r,
                 height: 44.r,
@@ -82,7 +103,7 @@ class _QuranPlayerState extends State<QuranPlayer>
                 ),
                 child: Icon(
                   Icons.graphic_eq,
-                  color: Color.fromARGB(255, 79, 62, 0),
+                  color: const Color.fromARGB(255, 79, 62, 0),
                   size: 22.sp,
                 ),
               ),
@@ -92,7 +113,9 @@ class _QuranPlayerState extends State<QuranPlayer>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.surahName,
+                      widget.ayahNumber != null
+                          ? '${widget.surahName} • Ayah ${widget.ayahNumber}'
+                          : widget.surahName,
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
@@ -114,24 +137,24 @@ class _QuranPlayerState extends State<QuranPlayer>
               ),
             ],
           ),
-
           SizedBox(height: 12.h),
-
-          // Controls row
+          // CONTROLS
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // Rewind 10 s
+              // Rewind
               _PlayerIconButton(
                 icon: Icons.replay_10_rounded,
                 size: 26.sp,
-                onTap: () => setState(
-                  () => _progress = (_progress - 0.011).clamp(0.0, 1.0),
-                ),
+                onTap: () {
+                  setState(() {
+                    _progress = (_progress - 0.011).clamp(0.0, 1.0);
+                  });
+                },
               ),
-              // Play / Pause (large)
+              // Play / Pause
               GestureDetector(
-                onTap: () => setState(() => _isPlaying = !_isPlaying),
+                onTap: _togglePlay,
                 child: AnimatedBuilder(
                   animation: _pulseAnimation,
                   builder: (context, child) {
@@ -162,18 +185,19 @@ class _QuranPlayerState extends State<QuranPlayer>
                   ),
                 ),
               ),
-              // Forward 10 s
+              // Forward
               _PlayerIconButton(
                 icon: Icons.forward_10_rounded,
                 size: 26.sp,
-                onTap: () => setState(
-                  () => _progress = (_progress + 0.011).clamp(0.0, 1.0),
-                ),
+                onTap: () {
+                  setState(() {
+                    _progress = (_progress + 0.011).clamp(0.0, 1.0);
+                  });
+                },
               ),
             ],
           ),
-
-          // Progress slider
+          // PROGRESS
           Row(
             children: [
               Text(
@@ -198,7 +222,11 @@ class _QuranPlayerState extends State<QuranPlayer>
                     value: _progress,
                     min: 0,
                     max: 1,
-                    onChanged: (v) => setState(() => _progress = v),
+                    onChanged: (value) {
+                      setState(() {
+                        _progress = value;
+                      });
+                    },
                   ),
                 ),
               ),
@@ -217,15 +245,12 @@ class _QuranPlayerState extends State<QuranPlayer>
   }
 }
 
-// Player Buttons
-
+// PLAYER BUTTON
 class _PlayerIconButton extends StatelessWidget {
   const _PlayerIconButton({required this.icon, required this.onTap, this.size});
-
   final IconData icon;
   final VoidCallback onTap;
   final double? size;
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
