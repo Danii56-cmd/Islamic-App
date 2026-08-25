@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:islamic_app/screens/home/home_screen.dart';
 import 'package:islamic_app/screens/more/more_screens.dart';
 import 'package:islamic_app/screens/prayers/prayers_screen.dart';
 import 'package:islamic_app/screens/quran/quran_screen.dart';
+import 'package:islamic_app/providers/location_provider.dart';
+import 'package:islamic_app/providers/qibla_provider.dart';
 import 'package:islamic_app/widgets/bottomnav.dart';
 import 'package:islamic_app/widgets/custom_pop_scope.dart';
+import 'package:provider/provider.dart';
 
 /// Global callback used by the common AppBar
 VoidCallback? openMoreTab;
@@ -25,6 +29,38 @@ class _MainScreenState extends State<MainScreen> {
   // Key to control More tab's internal Navigator
   final GlobalKey<NavigatorState> _moreNavigatorKey =
       GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkLocationOnStartup();
+    });
+  }
+
+  Future<void> _checkLocationOnStartup() async {
+    try {
+      final isServiceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!isServiceEnabled) {
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always) {
+        if (!mounted) return;
+        context.read<LocationProvider>().fetchLocation();
+        context.read<QiblaProvider>().checkAndFetchLocation();
+      }
+    } catch (_) {}
+  }
+
+
+
 
   void _goToTab(int index) {
     if (index < 0 || index > 3) return;

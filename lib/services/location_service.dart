@@ -32,10 +32,9 @@ class LocationService {
       );
     }
 
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
+    // Only check permission — never request it here.
+    // The LocationPermissionDialog is the single place that requests permission.
+    final permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       throw const LocationServiceException('Location permission denied.');
     }

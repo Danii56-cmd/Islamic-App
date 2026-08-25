@@ -10,6 +10,7 @@ class QuranProvider extends ChangeNotifier {
   QuranProvider({QuranService? service}) : _service = service ?? QuranService();
 
   static const _bookmarksKey = 'quran_bookmarked_ayahs';
+  static const _lastSurahKey = 'quran_last_selected_surah';
 
   QuranLoadStatus surahListStatus = QuranLoadStatus.idle;
   QuranLoadStatus ayahsStatus = QuranLoadStatus.idle;
@@ -27,8 +28,9 @@ class QuranProvider extends ChangeNotifier {
   Future<void> init() async {
     await _loadBookmarks();
     await fetchSurahList();
-    // Default to Surah 18 (Al-Kahf) to match the app's original design.
-    await fetchSurah(18);
+    final savedSurahNumber = await _loadLastSelectedSurah();
+    // Default to last selected Surah from SharedPreferences, or Surah 18 (Al-Kahf) for first time.
+    await fetchSurah(savedSurahNumber ?? 18);
   }
 
   Future<void> fetchSurahList() async {
@@ -57,6 +59,7 @@ class QuranProvider extends ChangeNotifier {
             )
           : null;
       ayahsStatus = QuranLoadStatus.ready;
+      await _saveLastSelectedSurah(number);
     } catch (e) {
       errorMessage = e.toString();
       ayahsStatus = QuranLoadStatus.error;
@@ -96,5 +99,21 @@ class QuranProvider extends ChangeNotifier {
   Future<void> _loadBookmarks() async {
     final prefs = await SharedPreferences.getInstance();
     _bookmarkedKeys.addAll(prefs.getStringList(_bookmarksKey) ?? []);
+  }
+
+  Future<void> _saveLastSelectedSurah(int number) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_lastSurahKey, number);
+    } catch (_) {}
+  }
+
+  Future<int?> _loadLastSelectedSurah() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getInt(_lastSurahKey);
+    } catch (_) {
+      return null;
+    }
   }
 }

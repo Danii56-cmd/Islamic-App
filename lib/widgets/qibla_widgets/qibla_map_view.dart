@@ -36,6 +36,16 @@ class _QiblaMapViewState extends State<QiblaMapView> {
   }
 
   @override
+  void didUpdateWidget(covariant QiblaMapView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.userLocation != widget.userLocation) {
+      try {
+        _mapController.move(widget.userLocation, _mapController.camera.zoom);
+      } catch (_) {}
+    }
+  }
+
+  @override
   void dispose() {
     _mapController.dispose();
     super.dispose();
@@ -215,12 +225,16 @@ class _QiblaMapViewState extends State<QiblaMapView> {
             ),
           ),
           SizedBox(width: 8.w),
-          Text(
-            widget.distanceText,
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w700,
-              color: context.primary,
+          Flexible(
+            child: Text(
+              widget.distanceText,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w700,
+                color: context.primary,
+              ),
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
             ),
           ),
         ],

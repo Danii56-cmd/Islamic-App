@@ -16,8 +16,8 @@ class QiblaLocationRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final textToShow = locationName ??
         (currentPosition == null
-            ? 'London, United Kingdom'
-            : '${currentPosition!.latitude.toStringAsFixed(2)}°, ${currentPosition!.longitude.toStringAsFixed(2)}°');
+            ? 'Detecting location...'
+            : '${currentPosition!.latitude.toStringAsFixed(3)}°, ${currentPosition!.longitude.toStringAsFixed(3)}°');
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -33,7 +33,7 @@ class QiblaLocationRow extends StatelessWidget {
           child: Text(
             textToShow,
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w500,
               color: const Color(0xFF737D7A),
             ),

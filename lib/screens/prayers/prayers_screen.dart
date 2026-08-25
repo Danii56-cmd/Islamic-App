@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:islamic_app/providers/location_provider.dart';
 import 'package:islamic_app/providers/prayer_provider.dart';
 import 'package:islamic_app/screens/qibla/qiblafinder_screen.dart';
+import 'package:islamic_app/providers/qibla_provider.dart';
 import 'package:islamic_app/services/prayer_service.dart';
+import 'package:islamic_app/services/qibla_service.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/prayer_list.dart';
 
@@ -238,13 +240,22 @@ class PrayersScreen extends StatelessWidget {
               const PrayerList(),
               SizedBox(height: 10.h),
               // Qibla Direction Card - toggles Qibla finder view
-              _infoCard(
-                context: context,
-                title: "Qibla Direction",
-                value: "142° SE",
-                icon: Icons.explore_outlined,
-                color: const Color.fromARGB(77, 204, 229, 220),
-                onTap: onOpenQibla,
+              Consumer<QiblaProvider>(
+                builder: (context, qiblaProvider, _) {
+                  final bearing = qiblaProvider.qiblaBearing;
+                  final cardinal = QiblaService.getCardinalDirection(bearing);
+                  final qiblaText = bearing > 0
+                      ? '${bearing.round()}° $cardinal'
+                      : 'Find Direction';
+                  return _infoCard(
+                    context: context,
+                    title: "Qibla Direction",
+                    value: qiblaText,
+                    icon: Icons.explore_outlined,
+                    color: const Color.fromARGB(77, 204, 229, 220),
+                    onTap: onOpenQibla,
+                  );
+                },
               ),
               SizedBox(height: 14.h),
               // Method Card

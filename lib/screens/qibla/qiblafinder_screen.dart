@@ -1,10 +1,7 @@
-import 'dart:async';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter_compass_v2/flutter_compass_v2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:islamic_app/core/theme_extensions.dart';
+import 'package:islamic_app/providers/qibla_provider.dart';
 import 'package:islamic_app/widgets/appbar.dart';
 import 'package:islamic_app/widgets/custom_pop_scope.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_compass.dart';
@@ -13,9 +10,7 @@ import 'package:islamic_app/widgets/qibla_widgets/qibla_location_error.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_location_row.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_map_view.dart';
 import 'package:islamic_app/widgets/qibla_widgets/qibla_toggle.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-import 'package:islamic_app/providers/location_provider.dart';
 
 class QiblaFinderScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -28,126 +23,20 @@ class QiblaFinderScreen extends StatefulWidget {
 class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
   bool isMapSelected = false;
 
-  // Fixed bearing from user's GPS to Kaaba (degrees from North, clockwise)
-  double qiblaBearing = 142.0;
-
-  Position? currentPosition;
-  bool isLoading = true;
-  bool locationError = false;
-  bool noSensor = false;
-
-  static const double kaabaLat = 21.422487;
-  static const double kaabaLng = 39.826206;
-
   @override
   void initState() {
     super.initState();
-    _init();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<QiblaProvider>().initIfNeeded();
+      }
+    });
   }
-
-  Future<void> _init() async {
-    // 1. Check sensor
-    if (FlutterCompass.events == null) {
-      if (mounted)
-        setState(() {
-          noSensor = true;
-          isLoading = false;
-        });
-      return;
-    }
-
-    // 2. Location permission
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
-    if (mounted) setState(() => isLoading = false);
-
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      return; // Use default bearing
-    }
-
-    // 3. Get GPS fix
-    try {
-      final pos = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
-      ).timeout(const Duration(seconds: 6));
-
-      if (!mounted) return;
-      setState(() {
-        currentPosition = pos;
-        qiblaBearing = _calcBearing(pos.latitude, pos.longitude);
-      });
-    } catch (_) {
-      // Keep default bearing
-    }
-  }
-
-  /// Great-circle bearing from (lat, lng) to Kaaba.
-  double _calcBearing(double lat, double lng) {
-    final lat1 = lat * math.pi / 180;
-    final lat2 = kaabaLat * math.pi / 180;
-    final dLng = (kaabaLng - lng) * math.pi / 180;
-    final y = math.sin(dLng) * math.cos(lat2);
-    final x =
-        math.cos(lat1) * math.sin(lat2) -
-        math.sin(lat1) * math.cos(lat2) * math.cos(dLng);
-    return ((math.atan2(y, x) * 180 / math.pi) + 360) % 360;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  // Distance
-
-  double get _distanceKm {
-    final lat = currentPosition?.latitude ?? 51.5074;
-    final lng = currentPosition?.longitude ?? -0.1278;
-
-    // Haversine formula for accurate great-circle distance
-    const R = 6371.0; // Earth radius in km
-    final lat1 = lat * math.pi / 180;
-    final lat2 = kaabaLat * math.pi / 180;
-    final dLat = (kaabaLat - lat) * math.pi / 180;
-    final dLng = (kaabaLng - lng) * math.pi / 180;
-    final a =
-        math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(lat1) *
-            math.cos(lat2) *
-            math.sin(dLng / 2) *
-            math.sin(dLng / 2);
-    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
-    return R * c;
-  }
-
-  String get _distanceText {
-    final d = _distanceKm;
-    if (d >= 1000) {
-      // Format like "4,281 km"
-      final rounded = d.round();
-      final t = rounded ~/ 1000;
-      final r = rounded % 1000;
-      return '$t,${r.toString().padLeft(3, '0')} km';
-    }
-    return '${d.round()} km';
-  }
-
-  LatLng get _userLatLng => currentPosition == null
-      ? const LatLng(51.5074, -0.1278)
-      : LatLng(currentPosition!.latitude, currentPosition!.longitude);
-
-  LatLng get _kaabaLatLng => const LatLng(kaabaLat, kaabaLng);
-
-  // Build
 
   @override
   Widget build(BuildContext context) {
+    final qibla = context.watch<QiblaProvider>();
+
     return CustomPopScope(
       isRoot: false,
       onBackPressed: () {
@@ -164,7 +53,7 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
           child: Column(
             children: [
               SizedBox(height: 6.h),
-              // Back button + toggle row
+              // Top Back button + View Toggle row
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Row(
@@ -206,15 +95,15 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
                   child: isMapSelected
                       ? QiblaMapView(
                           key: const ValueKey('map'),
-                          userLocation: _userLatLng,
-                          kaabaLocation: _kaabaLatLng,
-                          currentPosition: currentPosition,
-                          qiblaDirection: qiblaBearing,
-                          distanceText: _distanceText,
+                          userLocation: qibla.userLatLng,
+                          kaabaLocation: qibla.kaabaLatLng,
+                          currentPosition: qibla.currentPosition,
+                          qiblaDirection: qibla.qiblaBearing,
+                          distanceText: qibla.distanceText,
                         )
                       : Container(
                           key: const ValueKey('compass'),
-                          child: _compassBody(),
+                          child: _buildCompassView(context, qibla),
                         ),
                 ),
               ),
@@ -225,14 +114,41 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
     );
   }
 
-  Widget _compassBody() {
-    if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: Color(0xFF004D40)),
+  Widget _buildCompassView(BuildContext context, QiblaProvider qibla) {
+    if (qibla.locationStatus == QiblaLocationStatus.loading &&
+        qibla.currentPosition == null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(color: Color(0xFF004D40)),
+            SizedBox(height: 14.h),
+            Text(
+              'Finding accurate GPS location...',
+              style: TextStyle(
+                fontSize: 13.sp,
+                color: const Color(0xFF5E6966),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       );
     }
 
-    if (noSensor) {
+    if (qibla.locationStatus != QiblaLocationStatus.ready &&
+        qibla.currentPosition == null) {
+      return QiblaLocationError(
+        status: qibla.locationStatus,
+        errorMessage: qibla.errorMessage,
+        onRetry: () => qibla.checkAndFetchLocation(requestIfNeeded: true),
+        onOpenSettings: qibla.locationStatus == QiblaLocationStatus.serviceDisabled
+            ? qibla.openLocationSettings
+            : qibla.openAppSettings,
+      );
+    }
+
+    if (qibla.sensorStatus == QiblaSensorStatus.unavailable) {
       return Center(
         child: Padding(
           padding: EdgeInsets.all(32.w),
@@ -246,11 +162,24 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
               ),
               SizedBox(height: 16.h),
               Text(
-                'No compass sensor detected on this device.\nPlease use the Map view instead.',
+                'No compass sensor (magnetometer) detected on this device.\nPlease switch to Map View to find Qibla.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: const Color(0xFF5E6966),
+                ),
+              ),
+              SizedBox(height: 16.h),
+              ElevatedButton.icon(
+                onPressed: () => setState(() => isMapSelected = true),
+                icon: const Icon(Icons.map_outlined),
+                label: const Text('Open Map View'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF004D40),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
                 ),
               ),
             ],
@@ -259,19 +188,20 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
       );
     }
 
-    if (locationError) {
-      return QiblaLocationError(onRetry: _init);
-    }
-
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 4.h),
         child: Column(
           children: [
-            // Compass — reads sensor internally via StreamBuilder
-            QiblaCompass(qiblaBearing: qiblaBearing),
-            SizedBox(height: 16.h),
+            // Compass with dynamic heading & Qibla bearing
+            QiblaCompass(
+              qiblaBearing: qibla.qiblaBearing,
+              deviceHeading: qibla.deviceHeading,
+              isAligned: qibla.isAligned,
+              needsCalibration: qibla.needsCalibration,
+            ),
+            SizedBox(height: 14.h),
             Text(
               'QIBLA DIRECTION',
               style: TextStyle(
@@ -288,32 +218,36 @@ class _QiblaFinderScreenState extends State<QiblaFinderScreen> {
               textBaseline: TextBaseline.alphabetic,
               children: [
                 Text(
-                  '${qiblaBearing.round()}',
+                  '${qibla.qiblaBearing.round()}',
                   style: TextStyle(
-                    fontSize: 48.sp,
+                    fontSize: 46.sp,
                     fontWeight: FontWeight.w800,
-                    color: const Color(0xFF003831),
+                    color: qibla.isAligned
+                        ? const Color(0xFF00796B)
+                        : const Color(0xFF003831),
                   ),
                 ),
                 SizedBox(width: 4.w),
                 Text(
                   '°',
                   style: TextStyle(
-                    fontSize: 28.sp,
+                    fontSize: 26.sp,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFFC5A038),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 16.h),
-            QiblaInfoCards(distanceText: _distanceText),
-            SizedBox(height: 16.h),
+            SizedBox(height: 14.h),
+            QiblaInfoCards(
+              distanceText: qibla.distanceText,
+              deviceHeading: qibla.deviceHeading,
+              isAligned: qibla.isAligned,
+            ),
+            SizedBox(height: 14.h),
             QiblaLocationRow(
-              currentPosition: currentPosition,
-              locationName:
-                  context.watch<LocationProvider>().location?.label ??
-                  (currentPosition == null ? 'London, United Kingdom' : null),
+              currentPosition: qibla.currentPosition,
+              locationName: qibla.locationName,
             ),
             SizedBox(height: 12.h),
           ],

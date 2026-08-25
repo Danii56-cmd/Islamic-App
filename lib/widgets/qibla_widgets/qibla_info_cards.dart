@@ -5,8 +5,15 @@ import 'package:islamic_app/core/theme_extensions.dart';
 
 class QiblaInfoCards extends StatelessWidget {
   final String distanceText;
+  final double deviceHeading;
+  final bool isAligned;
 
-  const QiblaInfoCards({super.key, required this.distanceText});
+  const QiblaInfoCards({
+    super.key,
+    required this.distanceText,
+    required this.deviceHeading,
+    this.isAligned = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,17 +23,18 @@ class QiblaInfoCards extends StatelessWidget {
         children: [
           Expanded(
             child: QiblaInfoCard(
-              title: 'DISTANCE',
+              title: 'DISTANCE TO KAABA',
               value: distanceText,
               accentColor: const Color(0xFF004D40),
             ),
           ),
           SizedBox(width: 14.w),
-          const Expanded(
+          Expanded(
             child: QiblaInfoCard(
-              title: 'PRECISION',
-              value: 'High\nAccuracy',
-              accentColor: Color(0xFFC5A038),
+              title: 'PHONE HEADING',
+              value: '${deviceHeading.round()}°',
+              subtitle: isAligned ? 'Aligned with Kaaba' : 'Turn towards Qibla',
+              accentColor: isAligned ? const Color(0xFF00796B) : const Color(0xFFC5A038),
             ),
           ),
         ],
@@ -38,12 +46,14 @@ class QiblaInfoCards extends StatelessWidget {
 class QiblaInfoCard extends StatelessWidget {
   final String title;
   final String value;
+  final String? subtitle;
   final Color accentColor;
 
   const QiblaInfoCard({
     super.key,
     required this.title,
     required this.value,
+    this.subtitle,
     required this.accentColor,
   });
 
@@ -51,7 +61,7 @@ class QiblaInfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14.r),
@@ -73,22 +83,37 @@ class QiblaInfoCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 10.sp,
-              letterSpacing: 1.1,
+              fontSize: 9.sp,
+              letterSpacing: 0.8,
               fontWeight: FontWeight.w600,
               color: context.textSecondary,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: 6.h),
+          SizedBox(height: 4.h),
           Text(
             value,
             style: TextStyle(
-              fontSize: 17.sp,
-              height: 1.25,
+              fontSize: 16.sp,
+              height: 1.2,
               fontWeight: FontWeight.w800,
               color: AppColors.primary,
             ),
           ),
+          if (subtitle != null) ...[
+            SizedBox(height: 2.h),
+            Text(
+              subtitle!,
+              style: TextStyle(
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w500,
+                color: accentColor,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ],
       ),
     );

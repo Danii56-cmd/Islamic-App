@@ -6,6 +6,7 @@ import 'package:islamic_app/providers/favourites_provider.dart';
 import 'package:islamic_app/providers/fontsize_provider.dart';
 import 'package:islamic_app/providers/location_provider.dart';
 import 'package:islamic_app/providers/prayer_provider.dart';
+import 'package:islamic_app/providers/qibla_provider.dart';
 import 'package:islamic_app/providers/quran_provider.dart';
 import 'package:islamic_app/providers/theme_provider.dart';
 import 'package:islamic_app/screens/mainscreen/main_screen.dart';
@@ -33,8 +34,11 @@ class MyApp extends StatelessWidget {
 
         // LOCATION
         ChangeNotifierProvider(
-          create: (_) => LocationProvider()..fetchLocation(),
+          create: (_) => LocationProvider(),
         ),
+
+        // QIBLA
+        ChangeNotifierProvider(create: (_) => QiblaProvider()),
 
         // PRAYER
         ChangeNotifierProxyProvider<LocationProvider, PrayerProvider>(
