@@ -12,8 +12,11 @@ class AyahCard extends StatelessWidget {
     required this.translation,
     this.tag = AyahTag.none,
     this.isBookmarked = false,
+    this.isSelected = false,
+    this.isPlaying = false,
     this.onBookmarkTap,
     this.onShareTap,
+    this.onPlayTap,
   });
 
   final int ayahNumber;
@@ -21,8 +24,11 @@ class AyahCard extends StatelessWidget {
   final String translation;
   final AyahTag tag;
   final bool isBookmarked;
+  final bool isSelected;
+  final bool isPlaying;
   final VoidCallback? onBookmarkTap;
   final VoidCallback? onShareTap;
+  final VoidCallback? onPlayTap;
 
   Color _tagColor(BuildContext context) {
     switch (tag) {
@@ -51,8 +57,20 @@ class AyahCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: context.card,
+        color: isPlaying
+            ? context.accent.withValues(alpha: 0.08)
+            : (isSelected
+                ? context.primary.withValues(alpha: 0.05)
+                : context.card),
         borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: isPlaying
+              ? context.accent
+              : (isSelected
+                  ? context.primary.withValues(alpha: 0.4)
+                  : Colors.transparent),
+          width: isPlaying ? 1.8 : 1.2,
+        ),
         boxShadow: [
           BoxShadow(
             color: context.shadow.withValues(alpha: 0.06),
@@ -69,8 +87,33 @@ class AyahCard extends StatelessWidget {
             // TOP ROW
             Row(
               children: [
-                _AyahNumberBadge(number: ayahNumber),
-                SizedBox(width: 14.w),
+                _AyahNumberBadge(
+                  number: ayahNumber,
+                  isActive: isPlaying || isSelected,
+                ),
+                SizedBox(width: 12.w),
+
+                // AUDIO PLAY BUTTON ON CARD
+                GestureDetector(
+                  onTap: onPlayTap,
+                  child: Container(
+                    padding: EdgeInsets.all(6.r),
+                    decoration: BoxDecoration(
+                      color: isPlaying
+                          ? context.accent
+                          : context.textMuted.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      isPlaying
+                          ? Icons.volume_up_rounded
+                          : Icons.play_arrow_rounded,
+                      size: 18.sp,
+                      color: isPlaying ? Colors.white : context.textPrimary,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12.w),
 
                 // BOOKMARK
                 GestureDetector(
@@ -81,7 +124,7 @@ class AyahCard extends StatelessWidget {
                     color: isBookmarked ? context.primary : context.textMuted,
                   ),
                 ),
-                SizedBox(width: 14.w),
+                SizedBox(width: 12.w),
 
                 // SHARE
                 GestureDetector(
@@ -93,8 +136,40 @@ class AyahCard extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                // TAG
-                if (tag != AyahTag.none)
+
+                // TAG / RECITING INDICATOR
+                if (isPlaying)
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 3.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: context.accent.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(6.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.graphic_eq,
+                          size: 12.sp,
+                          color: context.accent,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'RECITING',
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w700,
+                            color: context.accent,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else if (tag != AyahTag.none)
                   Text(
                     _tagLabel,
                     style: TextStyle(
@@ -140,8 +215,9 @@ class AyahCard extends StatelessWidget {
 }
 
 class _AyahNumberBadge extends StatelessWidget {
-  const _AyahNumberBadge({required this.number});
+  const _AyahNumberBadge({required this.number, this.isActive = false});
   final int number;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +226,9 @@ class _AyahNumberBadge extends StatelessWidget {
       height: 36.r,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: context.textMuted.withValues(alpha: 0.10),
+        color: isActive
+            ? context.accent.withValues(alpha: 0.2)
+            : context.textMuted.withValues(alpha: 0.10),
       ),
       alignment: Alignment.center,
       child: Text(
@@ -158,7 +236,7 @@ class _AyahNumberBadge extends StatelessWidget {
         style: TextStyle(
           fontSize: 13.sp,
           fontWeight: FontWeight.w700,
-          color: context.textPrimary,
+          color: isActive ? context.accent : context.textPrimary,
         ),
       ),
     );

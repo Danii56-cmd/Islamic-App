@@ -24,7 +24,7 @@ class QuranService {
 
   Future<List<AyahModel>> fetchSurahAyahs(int surahNumber) async {
     final uri = Uri.parse(
-      '$_baseUrl/surah/$surahNumber/editions/quran-uthmani,en.sahih',
+      '$_baseUrl/surah/$surahNumber/editions/quran-uthmani,en.sahih,ar.alafasy',
     );
     final response = await _get(uri);
     final editions = response['data'] as List<dynamic>;
@@ -34,17 +34,27 @@ class QuranService {
 
     final arabicAyahs = (editions[0]['ayahs'] as List<dynamic>);
     final translationAyahs = (editions[1]['ayahs'] as List<dynamic>);
+    final audioAyahs = editions.length >= 3
+        ? (editions[2]['ayahs'] as List<dynamic>?)
+        : null;
 
     final ayahs = <AyahModel>[];
     for (var i = 0; i < arabicAyahs.length; i++) {
       final a = arabicAyahs[i] as Map<String, dynamic>;
       final t = translationAyahs[i] as Map<String, dynamic>;
+      String? audioUrl;
+      if (audioAyahs != null && i < audioAyahs.length) {
+        final aud = audioAyahs[i] as Map<String, dynamic>;
+        audioUrl = aud['audio'] as String?;
+      }
+
       ayahs.add(
         AyahModel(
           numberInSurah: a['numberInSurah'] as int,
           numberInQuran: a['number'] as int,
           arabicText: a['text'] as String,
           translation: t['text'] as String,
+          audioUrl: audioUrl,
         ),
       );
     }

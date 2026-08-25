@@ -35,13 +35,23 @@ class AyahModel {
   final int numberInQuran;
   final String arabicText;
   final String translation;
+  final String? audioUrl;
 
   const AyahModel({
     required this.numberInSurah,
     required this.numberInQuran,
     required this.arabicText,
     required this.translation,
+    this.audioUrl,
   });
+
+  /// Direct high quality CDN audio URL for the recitation of this Ayah
+  String get effectiveAudioUrl {
+    if (audioUrl != null && audioUrl!.trim().isNotEmpty) {
+      return audioUrl!;
+    }
+    return 'https://cdn.islamic.network/quran/audio/128/ar.alafasy/$numberInQuran.mp3';
+  }
 
   /// Stable key used for bookmarking/persistence, independent of surah.
   String get key => 'ayah_$numberInQuran';

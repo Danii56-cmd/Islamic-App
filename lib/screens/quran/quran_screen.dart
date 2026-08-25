@@ -29,11 +29,6 @@ class QuranScreen extends StatefulWidget {
 class _QuranScreenState extends State<QuranScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  // Currently selected/playing Ayah.
-  int? _selectedAyahNumber;
-  // Currently selected Surah.
-  int? _selectedSurahNumber;
-
   @override
   void dispose() {
     _searchController.dispose();
@@ -152,12 +147,6 @@ class _QuranScreenState extends State<QuranScreen> {
                                 selectedSurah.number;
                             return InkWell(
                               onTap: () {
-                                // Clear selected Ayah because
-                                // the user is changing Surah.
-                                setState(() {
-                                  _selectedAyahNumber = null;
-                                  _selectedSurahNumber = selectedSurah.number;
-                                });
                                 provider.fetchSurah(selectedSurah.number);
                                 Navigator.pop(ctx);
                               },
@@ -257,13 +246,7 @@ class _QuranScreenState extends State<QuranScreen> {
     );
   }
 
-  // AYAH SELECTION
-  void _selectAyah({required int surahNumber, required int ayahNumber}) {
-    setState(() {
-      _selectedSurahNumber = surahNumber;
-      _selectedAyahNumber = ayahNumber;
-    });
-  }
+
 
   // BUILD
   @override
@@ -508,18 +491,17 @@ class _QuranScreenState extends State<QuranScreen> {
                   else
                     ...ayahs.map((ayah) {
                       final isSelected =
-                          _selectedSurahNumber == currentSurahNumber &&
-                          _selectedAyahNumber == ayah.numberInSurah;
+                          provider.activeAyahNumber == ayah.numberInSurah;
+                      final isCurrentlyPlaying =
+                          isSelected && provider.isAudioPlaying;
+
                       return Column(
                         children: [
                           // AYAH CARD
                           GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: () {
-                              _selectAyah(
-                                surahNumber: currentSurahNumber,
-                                ayahNumber: ayah.numberInSurah,
-                              );
+                              provider.selectAyah(ayah.numberInSurah);
                             },
                             child: Consumer<FavoritesProvider>(
                               builder: (context, favorites, child) {
@@ -532,6 +514,15 @@ class _QuranScreenState extends State<QuranScreen> {
                                   arabicText: ayah.arabicText,
                                   translation: ayah.translation,
                                   isBookmarked: isFavorite,
+                                  isSelected: isSelected,
+                                  isPlaying: isCurrentlyPlaying,
+                                  onPlayTap: () {
+                                    if (isCurrentlyPlaying) {
+                                      provider.pauseAudio();
+                                    } else {
+                                      provider.playAyah(ayah.numberInSurah);
+                                    }
+                                  },
                                   onBookmarkTap: () {
                                     favorites.toggleAyahFavorite(
                                       FavoriteAyah(
@@ -548,7 +539,7 @@ class _QuranScreenState extends State<QuranScreen> {
                             ),
                           ),
 
-                          // SELECTED AYAH INDICATOR
+                          // SELECTED / RECITING AYAH INDICATOR
                           if (isSelected)
                             Padding(
                               padding: EdgeInsets.only(top: 6.h),
@@ -556,13 +547,17 @@ class _QuranScreenState extends State<QuranScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    Icons.graphic_eq_rounded,
+                                    isCurrentlyPlaying
+                                        ? Icons.volume_up_rounded
+                                        : Icons.graphic_eq_rounded,
                                     size: 14.sp,
                                     color: context.accent,
                                   ),
                                   SizedBox(width: 5.w),
                                   Text(
-                                    'Selected Ayah ${ayah.numberInSurah}',
+                                    isCurrentlyPlaying
+                                        ? 'Reciting Ayah ${ayah.numberInSurah} on Speaker'
+                                        : 'Selected Ayah ${ayah.numberInSurah}',
                                     style: TextStyle(
                                       fontSize: 10.sp,
                                       fontWeight: FontWeight.w600,
@@ -585,9 +580,26 @@ class _QuranScreenState extends State<QuranScreen> {
                 bottom: 16.h,
                 child: QuranPlayer(
                   surahName: surahTitle,
-                  // This is the Ayah selected by the user.
-                  ayahNumber: _selectedAyahNumber,
+                  ayahNumber: provider.activeAyahNumber ??
+                      (ayahs.isNotEmpty ? ayahs.first.numberInSurah : 1),
                   reciterName: 'Mishary Rashid Alafasy',
+                  isPlaying: provider.isAudioPlaying,
+                  isLoading: provider.isAudioLoading,
+                  position: provider.audioPosition,
+                  duration: provider.audioDuration,
+                  progress: provider.audioProgress,
+                  onPlayPause: () {
+                    provider.togglePlayPause();
+                  },
+                  onSeek: (val) {
+                    provider.seekAudioProgress(val);
+                  },
+                  onPrevious: () {
+                    provider.skipBackward();
+                  },
+                  onNext: () {
+                    provider.skipForward();
+                  },
                 ),
               ),
             ],

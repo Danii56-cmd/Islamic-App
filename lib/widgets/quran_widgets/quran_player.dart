@@ -8,22 +8,39 @@ class QuranPlayer extends StatefulWidget {
     this.surahName = 'Surah Al-Kahf',
     this.reciterName = 'Mishary Rashid Alafasy',
     this.ayahNumber,
+    this.isPlaying = false,
+    this.isLoading = false,
+    this.position = Duration.zero,
+    this.duration = Duration.zero,
+    this.progress = 0.0,
     this.onPlayPause,
+    this.onSeek,
+    this.onPrevious,
+    this.onNext,
   });
+
   final String surahName;
   final String reciterName;
   final int? ayahNumber;
+  final bool isPlaying;
+  final bool isLoading;
+  final Duration position;
+  final Duration duration;
+  final double progress;
   final VoidCallback? onPlayPause;
+  final ValueChanged<double>? onSeek;
+  final VoidCallback? onPrevious;
+  final VoidCallback? onNext;
+
   @override
   State<QuranPlayer> createState() => _QuranPlayerState();
 }
 
 class _QuranPlayerState extends State<QuranPlayer>
     with SingleTickerProviderStateMixin {
-  bool _isPlaying = false;
-  double _progress = 0.0;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+  double? _dragValue;
 
   @override
   void initState() {
@@ -32,22 +49,9 @@ class _QuranPlayerState extends State<QuranPlayer>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     )..repeat(reverse: true);
-    _pulseAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
+    _pulseAnimation = Tween<double>(begin: 0.88, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
-  }
-
-  @override
-  void didUpdateWidget(covariant QuranPlayer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.ayahNumber != widget.ayahNumber ||
-        oldWidget.surahName != widget.surahName) {
-      setState(() {
-        _progress = 0.0;
-        _isPlaying = false;
-      });
-    }
   }
 
   @override
@@ -56,53 +60,47 @@ class _QuranPlayerState extends State<QuranPlayer>
     super.dispose();
   }
 
-  String _formatTime(double progress, {bool remaining = false}) {
-    const totalSeconds = 847;
-    final elapsed = (totalSeconds * progress).round();
-    final display = remaining ? totalSeconds - elapsed : elapsed;
-    final m = display ~/ 60;
-    final s = display % 60;
-    return '${m.toString().padLeft(2, '0')}:'
-        '${s.toString().padLeft(2, '0')}';
-  }
-
-  void _togglePlay() {
-    setState(() {
-      _isPlaying = !_isPlaying;
-    });
-    widget.onPlayPause?.call();
+  String _formatDuration(Duration d) {
+    final m = d.inMinutes;
+    final s = d.inSeconds % 60;
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentProgress = (_dragValue ?? widget.progress).clamp(0.0, 1.0);
+    final remainingDuration = widget.duration > widget.position
+        ? widget.duration - widget.position
+        : Duration.zero;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.primary,
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.25),
+            color: AppColors.primary.withValues(alpha: 0.30),
             blurRadius: 20.r,
             offset: Offset(0, 8.h),
           ),
         ],
       ),
-      padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // SURAH + AYAH INFO
+          // SURAH + AYAH INFO & SPEAKER ICON
           Row(
             children: [
               Container(
-                width: 44.r,
-                height: 44.r,
+                width: 42.r,
+                height: 42.r,
                 decoration: BoxDecoration(
                   color: AppColors.accent,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(
-                  Icons.graphic_eq,
+                  widget.isPlaying ? Icons.volume_up_rounded : Icons.graphic_eq,
                   color: const Color.fromARGB(255, 79, 62, 0),
                   size: 22.sp,
                 ),
@@ -124,46 +122,80 @@ class _QuranPlayerState extends State<QuranPlayer>
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 2.h),
-                    Text(
-                      widget.reciterName,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: Colors.white.withValues(alpha: 0.60),
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        Text(
+                          widget.reciterName,
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color: Colors.white.withValues(alpha: 0.70),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(width: 6.w),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 5.w,
+                            vertical: 1.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.speaker_rounded,
+                                size: 10.sp,
+                                color: AppColors.accent,
+                              ),
+                              SizedBox(width: 2.w),
+                              Text(
+                                'Speaker',
+                                style: TextStyle(
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 10.h),
+
           // CONTROLS
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // Rewind
+              // Previous / Rewind
               _PlayerIconButton(
                 icon: Icons.replay_10_rounded,
                 size: 26.sp,
                 onTap: () {
-                  setState(() {
-                    _progress = (_progress - 0.011).clamp(0.0, 1.0);
-                  });
+                  widget.onPrevious?.call();
                 },
               ),
-              // Play / Pause
+              // Play / Pause / Loading
               GestureDetector(
-                onTap: _togglePlay,
+                onTap: widget.onPlayPause,
                 child: AnimatedBuilder(
                   animation: _pulseAnimation,
                   builder: (context, child) {
-                    final scale = _isPlaying ? _pulseAnimation.value : 1.0;
+                    final scale =
+                        widget.isPlaying ? _pulseAnimation.value : 1.0;
                     return Transform.scale(scale: scale, child: child);
                   },
                   child: Container(
-                    width: 54.r,
-                    height: 54.r,
+                    width: 52.r,
+                    height: 52.r,
                     decoration: BoxDecoration(
                       color: AppColors.accent,
                       shape: BoxShape.circle,
@@ -175,66 +207,84 @@ class _QuranPlayerState extends State<QuranPlayer>
                         ),
                       ],
                     ),
-                    child: Icon(
-                      _isPlaying
-                          ? Icons.pause_rounded
-                          : Icons.play_arrow_rounded,
-                      color: Colors.white,
-                      size: 28.sp,
-                    ),
+                    child: widget.isLoading
+                        ? Center(
+                            child: SizedBox(
+                              width: 22.r,
+                              height: 22.r,
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : Icon(
+                            widget.isPlaying
+                                ? Icons.pause_rounded
+                                : Icons.play_arrow_rounded,
+                            color: Colors.white,
+                            size: 28.sp,
+                          ),
                   ),
                 ),
               ),
-              // Forward
+              // Next / Forward
               _PlayerIconButton(
                 icon: Icons.forward_10_rounded,
                 size: 26.sp,
                 onTap: () {
-                  setState(() {
-                    _progress = (_progress + 0.011).clamp(0.0, 1.0);
-                  });
+                  widget.onNext?.call();
                 },
               ),
             ],
           ),
-          // PROGRESS
+
+          // PROGRESS SLIDER & TIMESTAMPS
           Row(
             children: [
               Text(
-                _formatTime(_progress),
+                _formatDuration(widget.position),
                 style: TextStyle(
                   fontSize: 10.sp,
-                  color: Colors.white.withValues(alpha: 0.55),
+                  color: Colors.white.withValues(alpha: 0.65),
                 ),
               ),
               Expanded(
                 child: SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     trackHeight: 3.h,
-                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6.r),
-                    overlayShape: RoundSliderOverlayShape(overlayRadius: 14.r),
+                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5.r),
+                    overlayShape: RoundSliderOverlayShape(overlayRadius: 12.r),
                     activeTrackColor: AppColors.accent,
                     inactiveTrackColor: Colors.white.withValues(alpha: 0.20),
                     thumbColor: AppColors.accent,
                     overlayColor: AppColors.accent.withValues(alpha: 0.20),
                   ),
                   child: Slider(
-                    value: _progress,
+                    value: currentProgress,
                     min: 0,
                     max: 1,
                     onChanged: (value) {
                       setState(() {
-                        _progress = value;
+                        _dragValue = value;
                       });
+                    },
+                    onChangeEnd: (value) {
+                      setState(() {
+                        _dragValue = null;
+                      });
+                      widget.onSeek?.call(value);
                     },
                   ),
                 ),
               ),
               Text(
-                '-${_formatTime(_progress, remaining: true)}',
+                widget.duration > Duration.zero
+                    ? '-${_formatDuration(remainingDuration)}'
+                    : '--:--',
                 style: TextStyle(
                   fontSize: 10.sp,
-                  color: Colors.white.withValues(alpha: 0.55),
+                  color: Colors.white.withValues(alpha: 0.65),
                 ),
               ),
             ],
@@ -257,7 +307,7 @@ class _PlayerIconButton extends StatelessWidget {
       onTap: onTap,
       child: Icon(
         icon,
-        color: Colors.white.withValues(alpha: 0.75),
+        color: Colors.white.withValues(alpha: 0.85),
         size: size ?? 22.sp,
       ),
     );
