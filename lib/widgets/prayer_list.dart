@@ -1,24 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/theme_extensions.dart';
-import 'package:provider/provider.dart';
+import 'package:islamic_app/providers/notification_provider.dart';
 import 'package:islamic_app/providers/prayer_provider.dart';
+import 'package:provider/provider.dart';
 
-class PrayerList extends StatefulWidget {
+class PrayerList extends StatelessWidget {
   const PrayerList({super.key});
-
-  @override
-  State<PrayerList> createState() => _PrayerListState();
-}
-
-class _PrayerListState extends State<PrayerList> {
-  final Set<String> _notificationsEnabled = {
-    'Fajr',
-    'Dhuhr',
-    'Asr',
-    'Maghrib',
-    'Isha',
-  };
 
   IconData _iconForPrayer(String name) {
     switch (name.toLowerCase()) {
@@ -49,8 +37,8 @@ class _PrayerListState extends State<PrayerList> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<PrayerProvider>(
-      builder: (context, provider, _) {
+    return Consumer2<PrayerProvider, NotificationProvider>(
+      builder: (context, provider, notifProvider, _) {
         final timings = provider.timings;
         final activePrayer = provider.activePrayerName;
 
@@ -105,7 +93,8 @@ class _PrayerListState extends State<PrayerList> {
             final bool isActive =
                 name.toLowerCase() ==
                 (activePrayer.isEmpty ? "dhuhr" : activePrayer.toLowerCase());
-            final bool isNotifOn = _notificationsEnabled.contains(name);
+            final bool isPrayerEnabled = notifProvider.isPrayerEnabled(name);
+            final bool isNotifActive = notifProvider.isPrayerActive(name);
 
             return Padding(
               padding: EdgeInsets.only(bottom: 12.h),
@@ -177,35 +166,45 @@ class _PrayerListState extends State<PrayerList> {
 
                     // Notification Icon Toggle
                     GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (isNotifOn) {
-                            _notificationsEnabled.remove(name);
-                          } else {
-                            _notificationsEnabled.add(name);
-                          }
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            duration: const Duration(seconds: 1),
-                            content: Text(
-                              isNotifOn
-                                  ? 'Notifications muted for $name'
-                                  : 'Notification set for $name',
-                            ),
-                          ),
+                      onTap: () async {
+                        final nextState = !isPrayerEnabled;
+                        await notifProvider.togglePrayer(
+                          name,
+                          nextState,
+                          provider.timings,
                         );
+
+                        if (context.mounted) {
+                          String message;
+                          if (!nextState) {
+                            message = 'Notifications muted for $name';
+                          } else if (!notifProvider.isGlobalEnabled) {
+                            message =
+                                '$name enabled (Turn on notifications in More screen to receive alerts)';
+                          } else {
+                            message = 'Azan notification set for $name';
+                          }
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: const Duration(seconds: 1),
+                              content: Text(message),
+                            ),
+                          );
+                        }
                       },
                       child: Padding(
                         padding: EdgeInsets.all(4.r),
                         child: Icon(
-                          isNotifOn
+                          isNotifActive
                               ? Icons.notifications_active
-                              : Icons.notifications_off_outlined,
+                              : (isPrayerEnabled
+                                    ? Icons.notifications_none_rounded
+                                    : Icons.notifications_off_outlined),
                           size: 20.sp,
                           color: isActive
                               ? context.accent
-                              : (isNotifOn
+                              : (isNotifActive
                                     ? context.primary
                                     : context.textMuted),
                         ),

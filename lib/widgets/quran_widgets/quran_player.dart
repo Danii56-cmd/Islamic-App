@@ -124,13 +124,15 @@ class _QuranPlayerState extends State<QuranPlayer>
                     SizedBox(height: 2.h),
                     Row(
                       children: [
-                        Text(
-                          widget.reciterName,
-                          style: TextStyle(
-                            fontSize: 11.sp,
-                            color: Colors.white.withValues(alpha: 0.70),
+                        Flexible(
+                          child: Text(
+                            widget.reciterName,
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              color: Colors.white.withValues(alpha: 0.70),
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(width: 6.w),
                         Container(

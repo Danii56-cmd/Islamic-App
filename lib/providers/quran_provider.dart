@@ -94,7 +94,7 @@ class QuranProvider extends ChangeNotifier {
             audioMode: AndroidAudioMode.normal,
           ),
           iOS: AudioContextIOS(
-            category: AVAudioSessionCategory.playback,
+            category: AVAudioSessionCategory.playAndRecord,
             options: const {
               AVAudioSessionOptions.defaultToSpeaker,
             },

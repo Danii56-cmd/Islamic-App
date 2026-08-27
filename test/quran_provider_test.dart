@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:islamic_app/models/surah_model.dart';
 import 'package:islamic_app/providers/quran_provider.dart';
@@ -58,6 +59,19 @@ class FakeQuranService extends QuranService {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('xyz.luan/audioplayers.global'),
+          (MethodCall methodCall) async => 1,
+        );
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('xyz.luan/audioplayers'),
+          (MethodCall methodCall) async => 1,
+        );
+  });
 
   group('QuranProvider SharedPreferences persistence', () {
     test('Defaults to Surah 18 (Al-Kahf) if no saved preference exists', () async {

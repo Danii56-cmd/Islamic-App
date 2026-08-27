@@ -5,15 +5,18 @@ import 'package:islamic_app/providers/duas_provider.dart';
 import 'package:islamic_app/providers/favourites_provider.dart';
 import 'package:islamic_app/providers/fontsize_provider.dart';
 import 'package:islamic_app/providers/location_provider.dart';
+import 'package:islamic_app/providers/notification_provider.dart';
 import 'package:islamic_app/providers/prayer_provider.dart';
 import 'package:islamic_app/providers/qibla_provider.dart';
 import 'package:islamic_app/providers/quran_provider.dart';
 import 'package:islamic_app/providers/theme_provider.dart';
 import 'package:islamic_app/screens/mainscreen/main_screen.dart';
+import 'package:islamic_app/services/notification_service.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService().init();
   final fontSizeProvider = FontSizeProvider();
   await fontSizeProvider.load();
 
@@ -58,6 +61,19 @@ class MyApp extends StatelessWidget {
               );
             }
             return prayerProvider ?? PrayerProvider();
+          },
+        ),
+
+        // NOTIFICATIONS
+        ChangeNotifierProxyProvider<PrayerProvider, NotificationProvider>(
+          create: (_) => NotificationProvider()..init(),
+          update: (context, prayerProvider, notificationProvider) {
+            final notifProvider =
+                notificationProvider ?? NotificationProvider();
+            if (prayerProvider.timings != null) {
+              notifProvider.syncWithPrayerTimes(prayerProvider.timings);
+            }
+            return notifProvider;
           },
         ),
 
